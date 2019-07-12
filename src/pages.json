@@ -23,6 +23,42 @@
 			"style": {
 				"navigationBarTitleText": "防丢二维码"
 			}
+		},
+		{
+			"path": "pages/setPage/home",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/setPage/blackList",
+			"style": {
+				"navigationBarTitleText": "黑名单"
+			}
+		},
+		{
+			"path": "pages/purchase/purchase",
+			"style": {
+				"navigationBarTitleText": "充值"
+			}
+		},
+		{
+			"path": "pages/chatPage/home",
+			"style": {
+				"navigationBarTitleText": "消息"
+			}
+		},
+		{
+			"path": "pages/chatPage/chat",
+			"style": {
+				"navigationBarTitleText": "留言"
+			}
+		},
+		{
+			"path": "pages/purchase/purchaseQrcode",
+			"style": {
+				"navigationBarTitleText": "购买二维码"
+			}
 		}
 	],
 	"globalStyle": {

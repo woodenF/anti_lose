@@ -4,7 +4,7 @@
     <div class="input-wrapper">
       <input v-model="value" @input="phoneChange" maxlength="11" type="text">
       <div @click="clear" class="icon-wrapper">
-        <icon v-show="phone.length" type="clear" size="17"></icon>
+        <icon v-show="value.length" type="clear" size="17"></icon>
       </div>
     </div>
   </div>
@@ -15,8 +15,7 @@ import { Component, Prop, Watch, Model, Emit } from 'vue-property-decorator';
 
 @Component
 export default class ImInput extends Vue {
-  @Model('change') readonly phone!: string;
-  private value: string = this.phone;
+  private value: string = '';
 
   @Emit('input')
   private phoneChange() {

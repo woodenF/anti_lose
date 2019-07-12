@@ -13,7 +13,7 @@
           {{verification[index] || ''}}
         </div>
       </div>
-      <input maxlength="4" v-model="verification" class="input" type="text">
+      <input :focus="isFocus" maxlength="4" v-model="verification" class="input" type="text">
     </div>
   </div>
 </template>
@@ -24,8 +24,11 @@ import AntiMixin from '../mixins/antiMixin';
 
 @Component
 export default class Verification extends AntiMixin {
-  private phone: string = '15085622510';
+  @Prop()
+  private phone!: string;
   private verification: string = '';
+
+  private isFocus: boolean = true;
 
   private onCheckVerficationChange() {
     this.$emit('success')
@@ -34,6 +37,7 @@ export default class Verification extends AntiMixin {
   @Watch('verification')
   private verificationChange(verification: string) {
     if (verification.length === 4) {
+      this.isFocus = false
       this.onCheckVerficationChange()
     }
   }
@@ -79,7 +83,8 @@ export default class Verification extends AntiMixin {
     .input{
       opacity: 0;
       position: absolute;
-      width: 100%;
+      width: 500%;
+      left: -300%;
       height: 100%;
     }
   }

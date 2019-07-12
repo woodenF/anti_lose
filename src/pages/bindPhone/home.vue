@@ -1,19 +1,20 @@
 <template>
   <view class="bind-phone-home">
     <div class="title">
-      <div class="text">绑定手机</div>
-      <div class="text">即可使用该二维码</div>
+      <div class="text">
+        东西丢失后<br/>
+        可通过该手机号码<br/>
+        联系到您
+      </div>
       <div class="remark">
         绑定成功后,将防丢二维码贴在物品上进行使用
       </div>
     </div>
-    <im-input v-model="phone" :phone="phone"></im-input>
+    <im-input v-model="phone"></im-input>
     <div class="agreement">
       <label>防丢二维码用户协议</label>
     </div>
-    <div @click="onAgree" class="btn">
-      同意协议并绑定防丢二维码
-    </div>
+    <im-button class="btn" @click="onAgree" :label="'同意协议并绑定防丢二维码'"></im-button>
   </view>
 </template>
 <script lang='ts'>
@@ -22,14 +23,16 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '@/mixins/antiMixin';
 import ImInput from '@/components/im-input.vue';
 import { checkPhone } from '@/utils/util';
+import ImButton from '../../components/im-button.vue';
 
 @Component({
   components: {
-    ImInput
+    ImInput,
+    ImButton
   }
 })
 export default class BindPhoneHome extends AntiMixin {
-  private phone: string = '15085622510';
+  private phone: string = '';
 
   private onAgree() {
     const status = checkPhone(this.phone);

@@ -1,6 +1,6 @@
 <template>
   <div class="bind-phone-check">
-    <verification @success="success"></verification>
+    <verification :phone="phone" @success="success"></verification>
     <div class="resend">
       <div @click="resend" class="btn" :class="{active: verificationStatus}">
         重新发送{{timeDown}}
@@ -11,7 +11,7 @@
         <div class="title">绑定成功!</div>
         <div class="message">我们将免费赠送您60分钟的加密通话时长（通话不足1分钟记做1分钟）如果超过60分钟，请尽快充值。</div>
         <div class="submit">
-          <div @click="onDetermine" class="btn">确定</div>
+          <im-button @click="onDetermine" class="btn" :label="'确定'"></im-button>
         </div>
       </div>
     </div>
@@ -22,10 +22,12 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import Verification from '../../components/verification.vue';
 import AntiMixin from '../../mixins/antiMixin';
+import ImButton from '../../components/im-button.vue';
 
 @Component({
   components: {
-    Verification
+    Verification,
+    ImButton
   }
 })
 export default class BindPhoneCheck extends AntiMixin {
@@ -33,7 +35,12 @@ export default class BindPhoneCheck extends AntiMixin {
   private time: number = 60000;
   private timer: any = null;
   private isSuccess: boolean = false;
+  private phone: string = '';
 
+
+  onLoad(option: any) {
+    this.phone = option.phone;
+  }
   private mounted() {
     this.countDown();
   }
@@ -69,7 +76,7 @@ export default class BindPhoneCheck extends AntiMixin {
 
 }
 </script>
-<style lang='scss' scoped>
+<style lang='scss' >
 .bind-phone-check{
   position: relative;
   height: 100%;
@@ -139,16 +146,10 @@ export default class BindPhoneCheck extends AntiMixin {
         display: flex;
         justify-content: center;
         margin-top: 43px;
+        width: 100%;
         .btn{
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: #fff;
           width: 98px;
           height: 30px;
-          background:linear-gradient(264deg,rgba(255,171,72,1),rgba(255,138,34,1));
-          box-shadow:0px 0px 32px 8px rgba(255,138,34,0.2);
-          border-radius:6px 30px 30px 34px;
         }
       }
     }
