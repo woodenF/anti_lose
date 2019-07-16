@@ -23,6 +23,7 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 import Verification from '../../components/verification.vue';
 import AntiMixin from '../../mixins/antiMixin';
 import ImButton from '../../components/im-button.vue';
+import { bindPhone, sendMsnByPhone } from '../../http/api';
 
 @Component({
   components: {
@@ -52,6 +53,8 @@ export default class BindPhoneCheck extends AntiMixin {
   }
 
   private countDown() {
+    clearInterval(this.timer);
+    this.verificationStatus = false;
     this.time = 60000;
     this.timer = setInterval(() => {
       this.time -= 1000;
@@ -65,13 +68,20 @@ export default class BindPhoneCheck extends AntiMixin {
   private onDetermine() {
     this.navigateTo('/pages/homePage/home');
   }
-  private success() {
-    this.isSuccess = true;
+  private success(verification: string) {
+    bindPhone({ phone: this.phone, code: verification }).then((res: any) => {
+      if (res.errCode === 200) {
+        this.isSuccess = true;
+        return
+      }
+      this.errorToast('验证码错误！');
+    })
   }
 
   private resend() {
     if (!this.verificationStatus) return;
-    console.log('resend')
+    sendMsnByPhone({ phone: this.phone });
+    this.countDown()
   }
 
 }

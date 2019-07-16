@@ -13,21 +13,21 @@
         <img class="cancel" src="../../assets/image/contactOwner/cancel.png" alt="">
       </div>
     </div>
+    <div class="header">
+      <img @click="onLinkToPath('/pages/setPage/home')" class="set" src="../../assets/image/contactOwner/set.png" alt="">
+      <div class="space"></div>
+      <div class="notice-wrapper">
+        <img @click="onLinkToPath('/pages/chatPage/home')" class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
+      </div>
+    </div>
 		<div class="container">
 			<div v-if="isRegister" class="is-register">
-        <div class="header">
-          <img @click="onLinkToPath('/pages/setPage/home')" class="set" src="../../assets/image/contactOwner/set.png" alt="">
-          <div class="space"></div>
-          <div class="notice-wrapper">
-            <img @click="onLinkToPath('/pages/chatPage/home')" class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
-          </div>
-        </div>
         <div class="card-wrapper">
           <div class="title">允许被呼叫</div>
           <div class="content">关闭后，扫码将无法被呼叫</div>
           <div class="btn-wrapper">
-            <div @click="callStatus = !callStatus" class="btn" :class="{active: callStatus}">
-              <div :class="{left: !callStatus, right: callStatus}" class="status">
+            <div @click="isEncryption = !isEncryption" class="btn" :class="{active: isEncryption}">
+              <div :class="{left: !isEncryption, right: isEncryption}" class="status">
               </div>
             </div>
           </div>
@@ -44,7 +44,16 @@
         </div>
       </div>
 			<div v-else class="no-register">
-				no-register
+				<div class="swiper-wrapper">
+          <swiper class="swiper" indicator-dots>
+            <swiper-item class="swiper-item" v-for="(item, index) in swipers" :key="index">
+              <img mode="widthFix" :src="item.src" alt="">
+            </swiper-item>
+          </swiper>
+        </div>
+        <div class="btn-wrapper">
+          <im-button @click="onLinkToPath('/pages/purchase/purchaseQrcode')" class="btn" :label="'获取防丢二维码'"></im-button>
+        </div>
 			</div>
 		</div>
 	</div>
@@ -54,16 +63,39 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
 import AntiMixin from '@/mixins/antiMixin';
+import { getUserByCode, getUserInfoById } from '../../http/api';
+import ImButton from '../../components/im-button.vue';
 
-@Component
+@Component({
+  components: {
+    ImButton
+  }
+})
 export default class Home extends AntiMixin {
+  private swipers: object[] = [
+    { src: require('../../assets/image/home/banner_1.png') },
+    { src: require('../../assets/image/home/banner_2.png') }
+  ]
+  // 是否有提示信息
   private isTips: boolean = false;
-  private isRegister: boolean = true;
+  // 是否是注册用户
+  private isRegister: boolean = false;
   // 是否允许被呼叫
-	private callStatus: boolean = true;
+	private isEncryption: boolean = false;
 
   private mounted() {
-    this.navigateTo('/pages/chatPage/chat', { id: 1, nickName: '好大只呀' })
+    this.checkOpenId().then(() => {
+      getUserInfoById().then((res: any) => {
+        console.log(res)
+        if (!res.data) {
+          this.isRegister = false;
+          return
+        }
+        this.isRegister = true;
+        this.isEncryption = res.data.phoneEncryptionStatus;
+      })
+    })
+    // this.navigateTo('/pages/bindPhone/home', { id: 1, nickName: '好大只呀' })
   }
   private onLinkToPath(path: string) {
 		this.navigateTo(path)
@@ -72,6 +104,9 @@ export default class Home extends AntiMixin {
 </script>
 <style lang='scss'>
 .home{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 	.tips{
     display: flex;
     align-items: center;
@@ -111,8 +146,26 @@ export default class Home extends AntiMixin {
       }
     }
   }
+  .header{
+    margin-top: 3.6%;
+    padding: 0 7%;
+    display: flex;
+    justify-content: center;
+    .set{
+      width: 23px;
+      height: 22px;
+    }
+    .space{
+      flex: 1;
+    }
+    .notice{
+      width: 21px;
+      height: 22px;
+    }
+  }
 	.container{
-		padding: 0 7%;
+    flex: 1;
+    padding: 0 7%;
 		.is-register{
       display: flex;
       flex-direction: column;
@@ -122,22 +175,6 @@ export default class Home extends AntiMixin {
         white-space: nowrap;
         width: 100%;
         overflow: hidden;
-      }
-      .header{
-        margin-top: 3.6%;
-        display: flex;
-        justify-content: center;
-        .set{
-          width: 23px;
-          height: 22px;
-        }
-        .space{
-          flex: 1;
-        }
-        .notice{
-          width: 21px;
-          height: 22px;
-        }
       }
       .card-wrapper{
         display: flex;
@@ -215,6 +252,34 @@ export default class Home extends AntiMixin {
         &.more-qrcode{
           margin-bottom: 13px;
         }
+      }
+    }
+    .no-register{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      .swiper-wrapper{
+        display: flex;
+        align-items: center;
+        flex: 1;
+        width: 100%;
+        .swiper{
+          height: 107vw;
+          width: 100%;
+          .swiper-item{
+            display: flex;
+            justify-content: center;
+            img{
+              width: 100%;
+              box-shadow:0px 0px 60px 2px rgba(0, 0, 0, 0.06);
+            }
+          }
+        }
+      }
+      .btn-wrapper{
+        padding-bottom: 10%;
+        height: 49px;
+        font-size: 18px;
       }
     }
 	}

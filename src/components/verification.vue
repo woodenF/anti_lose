@@ -30,15 +30,15 @@ export default class Verification extends AntiMixin {
 
   private isFocus: boolean = true;
 
-  private onCheckVerficationChange() {
-    this.$emit('success')
+  private onCheckVerficationChange(verification: string) {
+    this.$emit('success', verification)
   }
 
   @Watch('verification')
   private verificationChange(verification: string) {
     if (verification.length === 4) {
       this.isFocus = false
-      this.onCheckVerficationChange()
+      this.onCheckVerficationChange(verification)
     }
   }
 }

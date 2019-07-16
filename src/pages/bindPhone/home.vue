@@ -24,6 +24,7 @@ import AntiMixin from '@/mixins/antiMixin';
 import ImInput from '@/components/im-input.vue';
 import { checkPhone } from '@/utils/util';
 import ImButton from '../../components/im-button.vue';
+import { sendMsnByPhone } from '../../http/api';
 
 @Component({
   components: {
@@ -40,6 +41,8 @@ export default class BindPhoneHome extends AntiMixin {
       this.errorToast('请输入正确的手机号码!');
       return
     }
+    sendMsnByPhone({ phone: this.phone}).then((res: any) => {
+    })
     this.navigateTo('/pages/bindPhone/check', {
       phone: this.phone
     })

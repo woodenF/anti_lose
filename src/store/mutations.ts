@@ -1,8 +1,10 @@
-import { UserInfo } from '../interface/interface';
 
 const mutations = {
-  setUserInfo: (state: any, userInfo: UserInfo) => {
-    state.userInfo = userInfo
+  setOpenId: (state: any, openId: string) => {
+    state.openId = openId;
+  },
+  setToken: (state: any, token: string) => {
+    state.token = token;
   }
 }
 
