@@ -6,7 +6,7 @@ const service = axios.create({
   timeout: 50000
 })
 /**
- * 解决小程序使用axios没有adapter问题
+ * 为小程序中使用axios配置adapter
  */
 service.defaults.adapter = (config: any) => {
   return new Promise((resolve, reject) => {
@@ -28,10 +28,10 @@ service.defaults.adapter = (config: any) => {
 service.interceptors.request.use(
   (config: any) => {
     config.data = JSON.stringify(config.data);
-    config.headers = {
+    config.headers = Object.assign({
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
       token: state.token
-    }
+    }, config.headers);
     return config;
   },
   (error: any) => {
@@ -67,16 +67,17 @@ export function post(url: string, params: any = {}) {
     service({
       method: 'post',
       url,
-      params
+      params,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      }
     })
     .then((res: any) => {
       if (!res) {
         resolve({});
         return;
       }
-      if (res.status === 200) {
-        resolve(res);
-      }
+      resolve(res);
     })
     .catch((err: any) => {
       reject(err);

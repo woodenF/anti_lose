@@ -52,7 +52,8 @@
         "appid": "",
         "setting" : {
         	"urlCheck" : true
-        }
+        },
+	    "navigateToMiniProgramAppIdList": ["wx5ab73a39aacf8dc2"]
     },
     "mp-alipay" : {
         "usingComponents" : true

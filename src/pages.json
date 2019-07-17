@@ -59,6 +59,12 @@
 			"style": {
 				"navigationBarTitleText": "购买二维码"
 			}
+		},
+		{
+			"path": "pages/setPage/about",
+			"style": {
+				"navigationBarTitleText": "关于"
+			}
 		}
 	],
 	"globalStyle": {

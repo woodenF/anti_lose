@@ -1,26 +1,25 @@
 <template>
   <div @click="changeOperationStatus(false)" class="chat-page-home">
-    <div class="message-wrapper"
-    >
+    <scroll-view class="message-wrapper">
       <div class="message-item"
       :style="{transform: `translateX(-${getTranslateX(index)}px)`}"
       :class="{active: isTouch}"
       @touchstart="touchStart($event, index)"
-      @touchmove.stop="touchMove($event, index)"
-      @touchend.stop="touchEnd"
+      @touchmove="touchMove($event, index)"
+      @touchend="touchEnd"
       v-for="(item, index) in messageList"
       :key="index">
         <div class="content" @click="onLinkToChat(item)">
           <div class="head-img">
-            <img :src="item.head_img" alt="">
+            <img :src="item.sendAvatarUrl" alt="">
           </div>
           <div class="message-info">
             <div class="user-info">
-              <div class="nick-name">{{item.nickName}}</div>
-              <div class="time">{{item.time}}</div>
+              <div class="nick-name">{{item.sendNickName}}</div>
+              <div class="time">{{item.messagesInfos[0].inTime}}</div>
             </div>
             <div class="last-message">
-              {{item.lastMessage}}
+              {{item.messagesInfos[0].content}}
             </div>
           </div>
         </div>
@@ -36,44 +35,32 @@
           </div>
         </div>
       </div>
-    </div>
+    </scroll-view>
   </div>
 </template>
 <script lang='ts'>
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '../../mixins/antiMixin';
+import { getMessageList } from '../../http/api';
 
 @Component
 export default class ChatPageHome extends AntiMixin {
   private activeChat: number = -1;
   private startX: number = 0;
-  private startY: number = 0;
   private offsetX: number = 0;
+  private scrollTop: number = 110;
   private isOperation: boolean = false;
   private isTouch: boolean = false;
   private confirm: object = { text: '确认删除对话', bg: '#FF3000', type: 'delete', status: false }
-  private messageList: object[] = [
-    { id: 1, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀1', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 2, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀2', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 3, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀3', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 4, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀4', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 5, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀5', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-    { id: 6, head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀6', lastMessage: '打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所打撒撒大所多所', time: '上午11.11' },
-  ]
+  private messageList: object[] = []
 
+  private mounted() {
+    getMessageList().then((res: any) => {
+      console.log(res)
+      this.messageList = res.data
+    })
+  }
 
   private get getTranslateX(): object {
     return (index: number) => {
@@ -87,8 +74,8 @@ export default class ChatPageHome extends AntiMixin {
       return
     }
     const params = {
-      id: data.id,
-      nickName: data.nickName
+      id: data.sendOpenId,
+      nickName: data.sendNickName
     }
     this.navigateTo('/pages/chatPage/chat', params);
   }
@@ -124,6 +111,7 @@ export default class ChatPageHome extends AntiMixin {
   }
   private touchMove(e: any, index: number) {
     const currentX = e.changedTouches[0].clientX;
+    const currentY = e.changedTouches[0].clientY;
     if (this.activeChat !== index) {
       this.changeOperationStatus(false)
       this.activeChat = index;

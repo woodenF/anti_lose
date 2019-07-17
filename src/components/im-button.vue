@@ -31,12 +31,12 @@ export default class ImButton extends Vue {
   width: 100%;
   height: 100%;
   background:linear-gradient(264deg,rgba(255,171,72,1),rgba(255,138,34,1));
-  box-shadow:0px 0px 32px 8px rgba(255,138,34,0.2);
+  box-shadow:0px 0px 16px 4px rgba(255,138,34,0.2);
   border-radius:10px 49px 49px 49px;
   color: #fff;
   &.active{
     background:linear-gradient(264deg,rgba(255,139,35,1),rgba(223,110,10,1));
-    box-shadow:0px 0px 32px 8px rgba(255,138,34,0.2);
+    box-shadow:0px 0px 16px 4px rgba(255,138,34,0.2);
     border-radius:10px 49px 49px 49px;
   }
 }

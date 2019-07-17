@@ -1,25 +1,26 @@
 <template>
   <div class="chat-page-chat">
-    <!-- <scroll-view scroll-y="true" :scroll-top="scrollTop" class="scroll-view">
-      <div v-for="(item, index) in 100" :key="index">{{index}}</div>
-    </scroll-view> -->
     <div class="content-wrapper">
-      <scroll-view scroll-y="true" :scroll-top="scrollTop" id="message-wrapper" class="message-wrapper">
+      <scroll-view
+      scroll-y="true"
+      :scroll-top="scrollTop"
+      id="message-wrapper"
+      class="message-wrapper">
         <div class="message-item" v-for="(item, index) in chatMessages" :key="index">
-          <div v-if="item.type === 'system'" class="system-message">
+          <div v-if="item.type === 3" class="system-message">
             {{item.content}}
           </div>
-          <div v-if="item.type === 'own'" class="own-message">
+          <div v-if="item.sendOpenId === openId" class="own-message">
             <div class="head-img">
-              <img :src="item.head_img" alt="">
+              <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
               {{item.content}}
             </div>
           </div>
-          <div v-if="item.type === 'other'" class="other-message">
+          <div v-if="item.sendOpenId === sendOpenId" class="other-message">
             <div class="head-img">
-              <img :src="item.head_img" alt="">
+              <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
               {{item.content}}
@@ -37,7 +38,7 @@
       </div>
       <div class="more-wrapper">
         <img v-if="inputMessage.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
-        <div @click="sendMessage" v-else class="send">发送</div>
+        <div @click="sendMessage(1)" v-else class="send">发送</div>
       </div>
     </div>
   </div>
@@ -47,6 +48,7 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '../../mixins/antiMixin';
 import ImTextarea from '../../components/im-textarea.vue';
+import { getMessageInfo, sendMessage } from '../../http/api';
 
 @Component({
   components:{
@@ -54,31 +56,48 @@ import ImTextarea from '../../components/im-textarea.vue';
   }
 })
 export default class ChatPageChat extends AntiMixin {
+  private sendOpenId: string = '';
+
   private inputMessage: string = '好大只呀';
-
   private scrollTop: number = 0;
-
-  private chatMessages: object[] = [
-    {
-      type: 'system', content: '06-11 下午17:15'
-    },
-    {
-      type: 'own', content: '好大啊之', head_img: 'http://img3.imgtn.bdimg.com/it/u=3361934473,3725527506&fm=26&gp=0.jpg'
-    },
-    {
-      type: 'other', content: '湿的萨德所多撒a', head_img: 'http://img3.imgtn.bdimg.com/it/u=1387403640,627783069&fm=26&gp=0.jpg'
-    }
-  ]
+  // type 1 文字 2 图片 3 系统消息
+  private chatMessages: object[] = []
 
   private onLoad(option: any) {
     this.changePageTitle(option.nickName)
+    this.sendOpenId = option.id;
   }
-  private sendMessage() {
-    this.chatMessages.push(
-      { type: 'own', content: this.inputMessage, head_img: 'http://img3.imgtn.bdimg.com/it/u=3361934473,3725527506&fm=26&gp=0.jpg' }
-    )
-    this.inputMessage = '';
-    this.scrollTop += 1000;
+
+  private mounted() {
+    this.getMessageInfo();
+  }
+  private sendMessage(type: number) {
+    const params = {
+      content: this.inputMessage,
+      toOpenId: this.sendOpenId,
+      type
+    }
+    sendMessage(params).then((res: any) => {
+      if (res.data.errCode === 200) {
+        this.chatMessages.push(
+          {
+            type: 1,
+            content: this.inputMessage,
+            sendAvatarUrl: 'http://img3.imgtn.bdimg.com/it/u=3361934473,3725527506&fm=26&gp=0.jpg',
+            sendOpenId: this.openId,
+            toOpenId: this.sendOpenId
+          }
+        )
+        this.inputMessage = '';
+        this.scrollTop += 1000;
+      }
+    })
+  }
+  private getMessageInfo() {
+    getMessageInfo({ sendOpenId: this.sendOpenId }).then((res: any) => {
+      this.chatMessages = (res.data as []).reverse();
+      this.scrollTop = (res.data as []).length * 500;
+    })
   }
 }
 </script>

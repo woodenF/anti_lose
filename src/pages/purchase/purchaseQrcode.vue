@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="btn-wrapper">
-      <im-button  class="btn" :label="'去购买'"></im-button>
+      <im-button @click="onNavigateToMiniProgram" class="btn" :label="'去购买'"></im-button>
     </div>
     <div class="remark">点击后会跳转到官方微信小店</div>
     <div class="card-wrapper">
@@ -35,6 +35,14 @@ import ImButton from '../../components/im-button.vue';
   }
 })
 export default class PurchaseQrcode extends Vue {
+  private onNavigateToMiniProgram() {
+    uni.navigateToMiniProgram({
+      appId: 'wx5ab73a39aacf8dc2',
+      success () {
+        console.log('---')
+      }
+    })
+  }
 }
 </script>
 <style lang='scss' scoped>

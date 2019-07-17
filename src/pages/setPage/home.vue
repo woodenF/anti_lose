@@ -45,7 +45,7 @@ export default class SetPageHome extends AntiMixin {
   private setOpations: object[] = [
     { label: '黑名单', path: '/pages/setPage/blackList' },
     { label: '更改手机号', path: '' },
-    { label: '关于防丢二维码', path: '' },
+    { label: '关于防丢二维码', path: '/pages/setPage/about' },
     { label: '常见问题', path: '' },
     { label: '意见反馈', path: '' },
   ]
