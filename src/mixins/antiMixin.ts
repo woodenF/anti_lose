@@ -1,8 +1,8 @@
 import { Vue } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
 import { UserInfo } from '../interface/interface';
-import { JsonToString } from '../utils/util';
-import { getUserByCode } from '../http/api';
+import { JsonToString, wxLogin } from '../utils/util';
+import { getUserByCode, setUserInfo } from '../http/api';
 
 export default class AntiMixin extends Vue {
   @State('openId')
@@ -15,11 +15,31 @@ export default class AntiMixin extends Vue {
   @Mutation('setToken')
   public setToken!: any;
 
+  @State('avatarUrl')
+  public avatarUrl!: string;
+  @Mutation('setAvatarUrl')
+  public setAvatarUrl!: any;
+
   public changePageTitle(title: string): void {
     uni.setNavigationBarTitle({
 			title,
 		});
   }
+
+  public async bindGetUserInfo(e: any, path: string = '') {
+    console.log(e)
+    console.log(path)
+    const userInfo = e.target.userInfo || false;
+    if (userInfo) {
+      console.log('success')
+      this.setAvatarUrl(userInfo.avatarUrl);
+      const isSuccess: any = await setUserInfo(userInfo);
+      if(isSuccess.errCode === 200) {
+        this.navigateTo(path)
+      }
+    }
+  }
+
   /**
    * 跳转页面
    * @param url 跳转路径
@@ -34,20 +54,15 @@ export default class AntiMixin extends Vue {
   /**
    * 检查openId是否存在
    */
-  public checkOpenId() {
-    return new Promise((resolve) => {
-      if (this.openId !== '') {
-        resolve()
-        return
-      }
-      this.wxLogin().then((code: any) => {
-        getUserByCode({ code }).then((res: any) => {
-          this.setOpenId(res.data.openId);
-          this.setToken(res.data.token);
-          resolve()
-        })
-      })
-    })
+  public async checkOpenId() {
+    if (this.openId !== '') {
+      return
+    }
+    const code = await wxLogin();
+    const loginInfo: any = await getUserByCode({ code });
+    this.setOpenId(loginInfo.data.openId);
+    this.setToken(loginInfo.data.token);
+    return
   }
 
   public errorToast(title: string) {
@@ -59,18 +74,18 @@ export default class AntiMixin extends Vue {
     )
   }
 
+  public tipToast(title: string) {
+      uni.showToast(
+        {
+          icon: 'success',
+          title,
+          duration: 1500
+        }
+      )
+  }
+
   public hidePhone(str: string, char: string) {
     const reg =  /^(\d{3})\d*(\d{4})$/;
     return str.replace(reg, '$1****$2')
-  }
-
-  private wxLogin() {
-    return new Promise((resolve) => {
-      uni.login({
-        success: (res) => {
-          resolve(res.code)
-        }
-      })
-    })
   }
 }

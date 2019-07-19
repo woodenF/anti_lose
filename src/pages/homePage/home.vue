@@ -14,10 +14,14 @@
       </div>
     </div>
     <div class="header">
-      <img @click="onLinkToPath('/pages/setPage/home')" class="set" src="../../assets/image/contactOwner/set.png" alt="">
+      <button @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
+        <img class="set" src="../../assets/image/contactOwner/set.png" alt="">
+      </button>
       <div class="space"></div>
       <div class="notice-wrapper">
-        <img @click="onLinkToPath('/pages/chatPage/home')" class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
+        <button @getuserinfo="bindGetUserInfo($event, '/pages/chatPage/home')" open-type="getUserInfo" class="set-btn">
+          <img class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
+        </button>
       </div>
     </div>
 		<div class="container">
@@ -52,7 +56,8 @@
           </swiper>
         </div>
         <div class="btn-wrapper">
-          <im-button @click="onLinkToPath('/pages/purchase/purchaseQrcode')" class="btn" :label="'获取防丢二维码'"></im-button>
+          <button class="author" @getuserinfo="bindGetUserInfo($event, '/pages/purchase/purchaseQrcode')" open-type="getUserInfo">获取防丢二维码</button>
+          <!-- <im-button @click="onLinkToPath('/pages/purchase/purchaseQrcode')" @getuserinfo="bindGetUserInfo" open-type="getUserInfo" class="btn" :label="'获取防丢二维码'"></im-button> -->
         </div>
 			</div>
 		</div>
@@ -65,6 +70,7 @@ import { State, Mutation } from 'vuex-class';
 import AntiMixin from '@/mixins/antiMixin';
 import { getUserByCode, getUserInfoById } from '../../http/api';
 import ImButton from '../../components/im-button.vue';
+import { checkLoginStatus } from '../../utils/util';
 
 @Component({
   components: {
@@ -83,23 +89,22 @@ export default class Home extends AntiMixin {
   // 是否允许被呼叫
 	private isEncryption: boolean = false;
 
-  private mounted() {
-    this.checkOpenId().then(() => {
-      getUserInfoById().then((res: any) => {
-        console.log(res)
-        if (!res.data) {
-          this.isRegister = false;
-          return
-        }
-        this.isRegister = true;
-        this.isEncryption = res.data.phoneEncryptionStatus;
-      })
-    })
-    // this.navigateTo('/pages/bindPhone/home', { id: 1, nickName: '好大只呀' })
+  private async mounted() {
+    await this.getUserInfo()
   }
+
+  private async getUserInfo() {
+    const userInfo: any = await getUserInfoById();
+    this.isEncryption = userInfo.phoneEncryptionStatus;
+    if (userInfo.phone !== '') {
+      this.isRegister = true
+    }
+  }
+
   private onLinkToPath(path: string) {
 		this.navigateTo(path)
   }
+
 }
 </script>
 <style lang='scss'>
@@ -151,9 +156,17 @@ export default class Home extends AntiMixin {
     padding: 0 7%;
     display: flex;
     justify-content: center;
-    .set{
-      width: 23px;
-      height: 22px;
+    .set-btn{
+      background: none;
+      padding: 0;
+      margin: 0;
+      &::after{
+        border: none;
+      }
+      .set{
+        width: 23px;
+        height: 22px;
+      }
     }
     .space{
       flex: 1;
@@ -165,9 +178,9 @@ export default class Home extends AntiMixin {
   }
 	.container{
     flex: 1;
-    padding: 0 7%;
 		.is-register{
       display: flex;
+      padding: 0 7%;
       flex-direction: column;
       .tips{
         height: 42px;
@@ -264,11 +277,13 @@ export default class Home extends AntiMixin {
         flex: 1;
         width: 100%;
         .swiper{
-          height: 107vw;
+          height: 100vw;
           width: 100%;
           .swiper-item{
             display: flex;
             justify-content: center;
+            padding: 0 10%;
+            box-sizing: border-box;
             img{
               width: 100%;
               box-shadow:0px 0px 60px 2px rgba(0, 0, 0, 0.06);
@@ -277,9 +292,16 @@ export default class Home extends AntiMixin {
         }
       }
       .btn-wrapper{
+        padding: 0 10%;
         padding-bottom: 10%;
         height: 49px;
         font-size: 18px;
+        .author{
+          background:linear-gradient(264deg,rgba(255,171,72,1),rgba(255,138,34,1));
+          box-shadow:0px 0px 16px 4px rgba(255,138,34,0.2);
+          border-radius:10px 49px 49px 49px;
+          color: #fff;
+        }
       }
     }
 	}

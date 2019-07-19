@@ -1,6 +1,7 @@
 const state = {
   openId: '',
-  token: ''
+  token: '',
+  avatarUrl: ''
 }
 
 export default state

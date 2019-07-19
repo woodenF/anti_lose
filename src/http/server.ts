@@ -1,5 +1,6 @@
 import axios from 'axios'
 import state from '@/store/state';
+import { checkLoginStatus } from '@/utils/util';
 
 const service = axios.create({
   baseURL: '/api',
@@ -61,16 +62,30 @@ export function fetch(url: string, params: any = {}) {
     });
   });
 }
+/**
+ * 在发送请求前判断token是否存在,不存在则请求token再发送请求
+ * method => Get
+ * @export
+ * @param {string} url
+ * @param {*} [params={}]
+ * @returns
+ */
+export async function fetchCheckToken(url: string, params: any = {}) {
+  await checkLoginStatus()
+  return fetch(url, params);
+}
 
-export function post(url: string, params: any = {}) {
+
+export function post(url: string, params: any = {}, headers: any = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }) {
   return new Promise((resolve, reject) => {
     service({
       method: 'post',
       url,
       params,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
+      headers
+      // headers: {
+      //   'Content-Type': 'application/json;charset=UTF-8',
+      // }
     })
     .then((res: any) => {
       if (!res) {
@@ -85,12 +100,18 @@ export function post(url: string, params: any = {}) {
   })
 }
 
-export function put(url: string, params: any = {}) {
+export async function postCheckToken(url: string, params: any = {}, headers: any = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }) {
+  await checkLoginStatus()
+  return post(url, params, headers);
+}
+
+export function put(url: string, params: any = {}, headers: any) {
   return new Promise((resolve, reject) => {
     service({
       method: 'put',
       url,
-      params
+      params,
+      headers
     })
     .then((res: any) => {
       if (!res) {
@@ -103,6 +124,11 @@ export function put(url: string, params: any = {}) {
       reject(err);
     })
   })
+}
+
+export async function putCheckToken(url: string, params: any = {}, headers: any = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }) {
+  await checkLoginStatus()
+  return put(url, params, headers);
 }
 
 export default service;

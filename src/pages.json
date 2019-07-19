@@ -65,6 +65,18 @@
 			"style": {
 				"navigationBarTitleText": "关于"
 			}
+		},
+		{
+			"path": "pages/bindPhone/option",
+			"style": {
+				"navigationBarTitleText": "绑定手机号"
+			}
+		},
+		{
+			"path": "pages/homePage/reward",
+			"style": {
+				"navigationBarTitleText": "打赏开发者"
+			}
 		}
 	],
 	"globalStyle": {

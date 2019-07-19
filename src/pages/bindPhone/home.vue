@@ -34,6 +34,7 @@ import { sendMsnByPhone } from '../../http/api';
 })
 export default class BindPhoneHome extends AntiMixin {
   private phone: string = '';
+  private code: string = '';
 
   private onAgree() {
     const status = checkPhone(this.phone);
@@ -41,11 +42,17 @@ export default class BindPhoneHome extends AntiMixin {
       this.errorToast('请输入正确的手机号码!');
       return
     }
-    sendMsnByPhone({ phone: this.phone}).then((res: any) => {
-    })
+    sendMsnByPhone({ phone: this.phone})
     this.navigateTo('/pages/bindPhone/check', {
-      phone: this.phone
+      phone: this.phone,
+      code: this.code
     })
+  }
+
+  private onLoad(option: any) {
+    if (option.code) {
+      this.code = option.code;
+    }
   }
 }
 </script>

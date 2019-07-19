@@ -2,16 +2,16 @@
   <div class="set-page-home">
     <div class="user-info">
       <div class="head-img">
-        <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4248235115,2201748940&fm=27&gp=0.jpg" alt="">
+        <img :src="userInfo.avatarUrl" alt="">
       </div>
       <div class="user-name">
-        好大只呀
+        {{userInfo.nickName}}
       </div>
     </div>
     <div class="account-info">
       <div class="surplus-wrapper">
         <div class="title">剩余加密通话分钟数</div>
-        <div class="surplus">13分钟</div>
+        <div class="surplus">{{userInfo.callMinute}}分钟</div>
       </div>
       <div class="purchase">
         <im-button :label="'购买'" @click="onLinkToPath('/pages/purchase/purchase')" class="btn"></im-button>
@@ -35,6 +35,7 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '../../mixins/antiMixin';
 import ImButton from '../../components/im-button.vue';
+import { getUserInfoById } from '../../http/api';
 
 @Component({
   components: {
@@ -42,6 +43,8 @@ import ImButton from '../../components/im-button.vue';
   }
 })
 export default class SetPageHome extends AntiMixin {
+  private userInfo: any = {};
+
   private setOpations: object[] = [
     { label: '黑名单', path: '/pages/setPage/blackList' },
     { label: '更改手机号', path: '' },
@@ -50,9 +53,17 @@ export default class SetPageHome extends AntiMixin {
     { label: '意见反馈', path: '' },
   ]
 
+  private mounted() {
+    this.getUserInfo();
+  }
+
   private onLinkToPath(path: string) {
     if (path === '') return
     this.navigateTo(path);
+  }
+
+  private async getUserInfo() {
+    this.userInfo = await getUserInfoById();
   }
 }
 </script>

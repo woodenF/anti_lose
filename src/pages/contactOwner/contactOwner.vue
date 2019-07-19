@@ -3,7 +3,7 @@
     <div class="container">
       <div class="no-register">
         <div class="home-wrapper">
-          <img src="../../assets/image/contactOwner/home.png" alt="">
+          <img @click="navigateTo('/pages/homePage/home')" src="../../assets/image/contactOwner/home.png" alt="">
         </div>
         <div class="card-wrapper">
           <div class="title">我的物品遗失了<br/>谢谢你能主动联系我</div>
@@ -20,7 +20,7 @@
           采用通话加密技术，呼叫双方不能看到对方的真实号码，不会泄漏您的隐私
         </div>
         <div class="leave-message">
-          若电话沟通有问题，请给 ta <label>留言  <img src="../../assets/image/contactOwner/right.png" alt=""></label>
+          若电话沟通有问题，请给 ta <label @click="navigateTo('/pages/chatPage/chat', { id: codeOwner.openId, nickName: codeOwner.nickName })">留言  <img src="../../assets/image/contactOwner/right.png" alt=""></label>
         </div>
       </div>
     </div>
@@ -29,10 +29,13 @@
 <script lang='ts'>
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
+import { queryCode } from '../../http/api';
+import AntiMixin from '../../mixins/antiMixin';
 
 @Component
-export default class ContactOwner extends Vue {
+export default class ContactOwner extends AntiMixin {
   private isAvailable: boolean = true;
+  private codeOwner: any = {};
   private get btnText(): string {
     return this.isAvailable ? '电话联系' : '对方关闭了被呼叫功能';
   }
@@ -52,6 +55,17 @@ export default class ContactOwner extends Vue {
         }
       }
     )
+  }
+
+  private async getCodeOwner(code: string) {
+    this.codeOwner = await queryCode({ code })
+    console.log(this.codeOwner)
+    this.isAvailable = this.codeOwner.phoneEncryptionStatus
+  }
+
+  private onLoad(option: any) {
+    this.getCodeOwner(option.code)
+    console.log(option)
   }
 }
 </script>

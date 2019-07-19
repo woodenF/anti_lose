@@ -24,14 +24,11 @@
           </div>
         </div>
         <div class="operation">
-          <div @click.stop="this.confirm = { text: '确认拉黑', bg: '#FF8A22', type: 'black', status: true }" class="pull-black">
+          <div @click.stop="pullBlack" class="pull-black">
             拉黑TA
           </div>
-          <div @click.stop="this.confirm = { text: '确认删除对话', bg: '#FF3000', type: 'delete', status: true }" class="delete">
+          <div @click.stop="deleteChat" class="delete">
             删除对话
-          </div>
-          <div @click.stop="operationForType(confirm.type, index)" v-if="confirm.status" :style="{background: confirm.bg}" class="confirm">
-            {{confirm.text}}
           </div>
         </div>
       </div>
@@ -52,14 +49,15 @@ export default class ChatPageHome extends AntiMixin {
   private scrollTop: number = 110;
   private isOperation: boolean = false;
   private isTouch: boolean = false;
-  private confirm: object = { text: '确认删除对话', bg: '#FF3000', type: 'delete', status: false }
   private messageList: object[] = []
 
   private mounted() {
-    getMessageList().then((res: any) => {
-      console.log(res)
-      this.messageList = res.data
-    })
+    this.getMessageList();
+  }
+
+  private async getMessageList() {
+    const messageList: any = await getMessageList();
+    this.messageList = messageList.data;
   }
 
   private get getTranslateX(): object {
@@ -101,10 +99,22 @@ export default class ChatPageHome extends AntiMixin {
     )
   }
   private deleteChat(index: number) {
-    this.isTouch = true;
-    this.changeOperationStatus(false);
-    this.messageList.splice(index, 1);
-    this.isTouch = false;
+    uni.showModal(
+      {
+        title: '',
+        content: '删除对话',
+        cancelText: '取消',
+        confirmText: '确认',
+        success: (res) => {
+          if (res.confirm) {
+            this.isTouch = true;
+            this.changeOperationStatus(false);
+            this.messageList.splice(index, 1);
+            this.isTouch = false;
+          }
+        }
+      }
+    )
   }
   private touchStart(e: any, index: number) {
     this.startX = e.changedTouches[0].clientX;
@@ -146,15 +156,6 @@ export default class ChatPageHome extends AntiMixin {
   private changeOperationStatus(operationStatus: boolean) {
     this.isOperation = operationStatus;
     this.offsetX = operationStatus ? 200 : 0;
-  }
-
-  @Watch('isOperation')
-  private operationStatusChange(operationChange: boolean) {
-    if (!operationChange) {
-      setTimeout(() => {
-        this.confirm = { text: '确认删除对话', bg: '#FF3000', type: 'delete', status: false };
-      }, 200);
-    }
   }
 }
 </script>

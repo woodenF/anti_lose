@@ -37,10 +37,11 @@ export default class BindPhoneCheck extends AntiMixin {
   private timer: any = null;
   private isSuccess: boolean = false;
   private phone: string = '';
+  private code: string = '';
 
-
-  onLoad(option: any) {
+  private onLoad(option: any) {
     this.phone = option.phone;
+    this.code = option.code;
   }
   private mounted() {
     this.countDown();
@@ -68,14 +69,14 @@ export default class BindPhoneCheck extends AntiMixin {
   private onDetermine() {
     this.navigateTo('/pages/homePage/home');
   }
-  private success(verification: string) {
-    bindPhone({ phone: this.phone, code: verification }).then((res: any) => {
-      if (res.errCode === 200) {
-        this.isSuccess = true;
-        return
-      }
-      this.errorToast('验证码错误！');
-    })
+  private async success(verification: string) {
+    const isSuccess: any = await bindPhone({ phone: this.phone, VCode: verification, code: this.code });
+    console.log(isSuccess)
+    if (isSuccess.errCode === 200) {
+      this.isSuccess = true;
+      return
+    }
+    this.errorToast('验证码错误!');
   }
 
   private resend() {

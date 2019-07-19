@@ -58,7 +58,7 @@ import { getMessageInfo, sendMessage } from '../../http/api';
 export default class ChatPageChat extends AntiMixin {
   private sendOpenId: string = '';
 
-  private inputMessage: string = '好大只呀';
+  private inputMessage: string = '';
   private scrollTop: number = 0;
   // type 1 文字 2 图片 3 系统消息
   private chatMessages: object[] = []
@@ -71,33 +71,33 @@ export default class ChatPageChat extends AntiMixin {
   private mounted() {
     this.getMessageInfo();
   }
-  private sendMessage(type: number) {
+
+  private async sendMessage(type: number) {
     const params = {
       content: this.inputMessage,
       toOpenId: this.sendOpenId,
       type
     }
-    sendMessage(params).then((res: any) => {
-      if (res.data.errCode === 200) {
-        this.chatMessages.push(
-          {
-            type: 1,
-            content: this.inputMessage,
-            sendAvatarUrl: 'http://img3.imgtn.bdimg.com/it/u=3361934473,3725527506&fm=26&gp=0.jpg',
-            sendOpenId: this.openId,
-            toOpenId: this.sendOpenId
-          }
-        )
-        this.inputMessage = '';
-        this.scrollTop += 1000;
-      }
-    })
+    const isSuccess: any = await sendMessage(params);
+    console.log(this.avatarUrl)
+    if (isSuccess.errCode === 200) {
+      this.chatMessages.push(
+        {
+          type: 1,
+          content: this.inputMessage,
+          sendAvatarUrl: this.avatarUrl,
+          sendOpenId: this.openId,
+          toOpenId: this.sendOpenId
+        }
+      )
+      this.inputMessage = '';
+      this.scrollTop += 1000;
+    }
   }
-  private getMessageInfo() {
-    getMessageInfo({ sendOpenId: this.sendOpenId }).then((res: any) => {
-      this.chatMessages = (res.data as []).reverse();
-      this.scrollTop = (res.data as []).length * 500;
-    })
+  private async getMessageInfo() {
+    const messageInfo: any = await getMessageInfo({ sendOpenId: this.sendOpenId });
+    this.chatMessages = (messageInfo.data as []).reverse();
+    this.scrollTop = (messageInfo.data as []).length * 500;
   }
 }
 </script>

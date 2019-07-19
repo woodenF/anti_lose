@@ -1,11 +1,16 @@
 import { urls } from '../utils/urls';
-import { fetch, post, put } from './server';
+import { fetch, post, put, fetchCheckToken, postCheckToken, putCheckToken } from './server';
 
 /**
  * 根据code获取用户openId以及token数据
  */
 export function getUserByCode(params: any = {}) {
-  return fetch(`${urls.getUserByCode}${params.code}.do`);
+  return new Promise((resolve, reject) => {
+    fetch(`${urls.getUserByCode}${params.code}.do`)
+      .then((res: any) => {
+        resolve(res.data)
+      })
+  })
 }
 
 /**
@@ -14,7 +19,11 @@ export function getUserByCode(params: any = {}) {
  * @returns
  */
 export function getUserInfoById() {
-  return fetch(urls.getUserInfoById);
+  return new Promise((resolve, reject) => {
+    fetchCheckToken(urls.getUserInfoById).then((res: any) => {
+      resolve(res.data);
+    })
+  })
 }
 
 /**
@@ -24,7 +33,7 @@ export function getUserInfoById() {
  * @returns
  */
 export function sendMsnByPhone(params: any = {}) {
-  return post(urls.sendMsnByPhone, params);
+  return postCheckToken(urls.sendMsnByPhone, params);
 }
 
 /**
@@ -35,7 +44,11 @@ export function sendMsnByPhone(params: any = {}) {
  * @returns
  */
 export function bindPhone(params: any = {}) {
-  return put(urls.bindPhone, params);
+  return new Promise((resolve, reject) => {
+    postCheckToken(`${urls.bindPhone}${params.code}.do`, params).then((res: any) => {
+      resolve(res.data);
+    })
+  })
 }
 
 /**
@@ -44,7 +57,12 @@ export function bindPhone(params: any = {}) {
  * @returns
  */
 export function getMessageList() {
-  return fetch(urls.getMessageList);
+  return new Promise((resolve, reject) => {
+    fetchCheckToken(urls.getMessageList).then((res: any) => {
+      resolve(res)
+    })
+  })
+  // return fetch(urls.getMessageList);
 }
 
 /**
@@ -55,7 +73,11 @@ export function getMessageList() {
  * @returns
  */
 export function getMessageInfo(params: any) {
-  return put(urls.getMessageInfo, params);
+  return new Promise((resolve, reject) => {
+    putCheckToken(urls.getMessageInfo, params).then((res: any) => {
+      resolve(res)
+    })
+  })
 }
 
 /**
@@ -66,7 +88,11 @@ export function getMessageInfo(params: any) {
  * @returns
  */
 export function sendMessage(params: any) {
-  return post(urls.sendMessage, params);
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.sendMessage, params, {'Content-Type': 'application/json;charset=UTF-8'}).then((res: any) => {
+      resolve(res.data);
+    })
+  })
 }
 
 /**
@@ -77,4 +103,69 @@ export function sendMessage(params: any) {
  */
 export function deleteMessage(params: any) {
   return post(urls.deleteMessage, params);
+}
+
+/**
+ * 查询当前二维码是否已经绑定账户
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function saveCode(params: any) {
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.saveCode, params).then((res: any) => {
+      resolve(res.data);
+    })
+  })
+}
+/**
+ * 根据二维码中的code查询主人
+ *
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function queryCode(params: any) {
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.queryCode, params).then((res: any) => {
+      resolve(res.data)
+    })
+  })
+}
+
+/**
+ * 获取微信支付统一下单凭证
+ *
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function uniformOrder(params: any) {
+  return new Promise((resolve, reject) => {
+    fetchCheckToken(urls.wxPayUnifiedorder, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+
+/**
+ * 获取充值类型列表
+ *
+ * @export
+ * @returns
+ */
+export function getRechargeList() {
+  return new Promise((resolve, reject) => {
+    fetchCheckToken(urls.getRechargeList).then((res: any) => {
+      resolve(res.data);
+    })
+  })
+}
+
+export function setUserInfo(params: any) {
+  return new Promise((resolve, reject) => {
+    putCheckToken(urls.setUserInfo, params,  {'Content-Type': 'application/json;charset=UTF-8'}).then((res: any) => {
+      resolve(res);
+    })
+  })
 }

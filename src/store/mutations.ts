@@ -5,6 +5,9 @@ const mutations = {
   },
   setToken: (state: any, token: string) => {
     state.token = token;
+  },
+  setAvatarUrl: (state: any, avatarUrl: string) => {
+    state.avatarUrl = avatarUrl;
   }
 }
 
