@@ -59,13 +59,11 @@ export default class ContactOwner extends AntiMixin {
 
   private async getCodeOwner(code: string) {
     this.codeOwner = await queryCode({ code })
-    console.log(this.codeOwner)
     this.isAvailable = this.codeOwner.phoneEncryptionStatus
   }
 
   private onLoad(option: any) {
     this.getCodeOwner(option.code)
-    console.log(option)
   }
 }
 </script>

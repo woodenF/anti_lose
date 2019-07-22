@@ -37,14 +37,11 @@ export default class BindPhoneOption extends AntiMixin {
     const qrCodeStatus: any = await queryCode({ code });
     // const qrCodeStatus: any = await saveCode({ code });
     this.currentUser = await getUserInfoById();
-    console.log(qrCodeStatus)
     if (qrCodeStatus.data) {
       // 该二维码已绑定用户
       if (qrCodeStatus.data.phone === this.currentUser.phone) {
-        console.log('绑定用户扫码');
         this.navigateTo('/pages/homePage/home', { code });
       } else {
-        console.log('非二维码绑定用户扫码');
         this.navigateTo('/pages/contactOwner/contactOwner', { code });
       }
     }

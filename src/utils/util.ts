@@ -13,14 +13,11 @@ export function checkPhone(phone: string) {
 }
 
 export async function checkLoginStatus() {
-  console.log('检查是否存在token=>', state.token)
   const token = state.token;
   if (token !== '') {
-    console.log(`已有Token=>${state.token}`)
     return
   }
   const code = await wxLogin();
-  console.log(`获取code=>${code}`)
   const loginInfo: any = await getUserByCode({ code });
   mutations.setOpenId(state, loginInfo.openId);
   mutations.setToken(state, loginInfo.token);

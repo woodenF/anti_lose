@@ -65,12 +65,8 @@ export default class Reward extends Vue {
       nonceStr: wxPay.nonceStr,
       package: wxPay.package,
       signType: wxPay.signType,
-      paySign: wxPay.paySign,
-      success: () => {
-        console.log('====')
-      }
+      paySign: wxPay.paySign
     })
-    console.log(wxPay)
   }
 
   private onChangeActivaOpation(index: number) {
@@ -84,7 +80,6 @@ export default class Reward extends Vue {
     this.customPrize = 0;
     this.isCustom = false;
     this.activeOptation = this.optation.length - 1;
-    console.log('onBlur')
   }
 
   private onCustomFocus() {

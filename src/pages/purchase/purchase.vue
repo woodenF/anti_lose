@@ -46,7 +46,6 @@ export default class Purchase extends Vue {
   private async getRechargeList() {
     const rechargeList = await getRechargeList();
     this.rechargeList = rechargeList
-    console.log(this.rechargeList[0])
   }
 
   private async getUserInfo() {
@@ -67,10 +66,7 @@ export default class Purchase extends Vue {
       nonceStr: wxPay.nonceStr,
       package: wxPay.package,
       signType: wxPay.signType,
-      paySign: wxPay.paySign,
-      success: () => {
-        console.log('====')
-      }
+      paySign: wxPay.paySign
     })
   }
 }

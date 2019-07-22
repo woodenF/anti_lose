@@ -71,7 +71,6 @@ export default class BindPhoneCheck extends AntiMixin {
   }
   private async success(verification: string) {
     const isSuccess: any = await bindPhone({ phone: this.phone, VCode: verification, code: this.code });
-    console.log(isSuccess)
     if (isSuccess.errCode === 200) {
       this.isSuccess = true;
       return

@@ -20,6 +20,9 @@ export default class AntiMixin extends Vue {
   @Mutation('setAvatarUrl')
   public setAvatarUrl!: any;
 
+  // 是否可跳转状态
+  public isNavigate: boolean = true;
+
   public changePageTitle(title: string): void {
     uni.setNavigationBarTitle({
 			title,
@@ -27,15 +30,17 @@ export default class AntiMixin extends Vue {
   }
 
   public async bindGetUserInfo(e: any, path: string = '') {
-    console.log(e)
-    console.log(path)
+    if (!this.isNavigate) {
+      return
+    }
+    this.isNavigate = true;
     const userInfo = e.target.userInfo || false;
     if (userInfo) {
-      console.log('success')
       this.setAvatarUrl(userInfo.avatarUrl);
       const isSuccess: any = await setUserInfo(userInfo);
       if(isSuccess.errCode === 200) {
         this.navigateTo(path)
+        this.isNavigate = false;
       }
     }
   }
@@ -46,23 +51,17 @@ export default class AntiMixin extends Vue {
    * @param params 携带参数
    */
   public navigateTo(url: string, params: object = {}): void {
+    if (!this.isNavigate) {
+      return;
+    }
+    this.isNavigate = false;
     const query = JsonToString(params);
     uni.navigateTo({
-      url: `${url}?${query}`
+      url: `${url}?${query}`,
+      success: () => {
+        this.isNavigate = true;
+      }
     })
-  }
-  /**
-   * 检查openId是否存在
-   */
-  public async checkOpenId() {
-    if (this.openId !== '') {
-      return
-    }
-    const code = await wxLogin();
-    const loginInfo: any = await getUserByCode({ code });
-    this.setOpenId(loginInfo.data.openId);
-    this.setToken(loginInfo.data.token);
-    return
   }
 
   public errorToast(title: string) {

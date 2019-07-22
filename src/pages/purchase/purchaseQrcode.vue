@@ -37,10 +37,7 @@ import ImButton from '../../components/im-button.vue';
 export default class PurchaseQrcode extends Vue {
   private onNavigateToMiniProgram() {
     uni.navigateToMiniProgram({
-      appId: 'wx5ab73a39aacf8dc2',
-      success () {
-        console.log('---')
-      }
+      appId: 'wx5ab73a39aacf8dc2'
     })
   }
 }

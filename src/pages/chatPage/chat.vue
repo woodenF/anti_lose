@@ -79,7 +79,6 @@ export default class ChatPageChat extends AntiMixin {
       type
     }
     const isSuccess: any = await sendMessage(params);
-    console.log(this.avatarUrl)
     if (isSuccess.errCode === 200) {
       this.chatMessages.push(
         {
@@ -154,6 +153,7 @@ export default class ChatPageChat extends AntiMixin {
     display: flex;
     align-items: flex-end;
     padding: 0 18px 18px 18px;
+    box-sizing: border-box;
     .input-wrapper{
       flex: 1;
       .input{

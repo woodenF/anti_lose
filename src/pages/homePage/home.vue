@@ -90,19 +90,17 @@ export default class Home extends AntiMixin {
 	private isEncryption: boolean = false;
 
   private async mounted() {
-    await this.getUserInfo()
+    await this.getUserInfo();
   }
 
   private async getUserInfo() {
     const userInfo: any = await getUserInfoById();
     this.isEncryption = userInfo.phoneEncryptionStatus;
-    if (userInfo.phone !== '') {
-      this.isRegister = true
-    }
+    this.isRegister = !!userInfo.phone;
   }
 
   private onLinkToPath(path: string) {
-		this.navigateTo(path)
+		this.navigateTo(path);
   }
 
 }
@@ -293,7 +291,7 @@ export default class Home extends AntiMixin {
       }
       .btn-wrapper{
         padding: 0 10%;
-        padding-bottom: 10%;
+        padding-bottom: 15%;
         height: 49px;
         font-size: 18px;
         .author{

@@ -28,6 +28,7 @@ export default class ImTextarea extends Vue {
   position: relative;
   min-height: 38px;
   max-height: 115px;
+  width: 100%;
   overflow: hidden;
   textarea{
     position: absolute;
@@ -40,6 +41,7 @@ export default class ImTextarea extends Vue {
     box-sizing: border-box;
     height: 100%;
     min-height: 38px;
+    width: 100%;
     border-radius:19px;
   }
   .mask{
