@@ -1,6 +1,6 @@
 <template>
   <div @click="changeOperationStatus(false)" class="chat-page-home">
-    <scroll-view class="message-wrapper">
+    <scroll-view v-if="messageList.length !== 0" class="message-wrapper">
       <div class="message-item"
       :style="{transform: `translateX(-${getTranslateX(index)}px)`}"
       :class="{active: isTouch}"
@@ -33,6 +33,9 @@
         </div>
       </div>
     </scroll-view>
+    <div v-else class="no-chat">
+      暂无消息留言
+    </div>
   </div>
 </template>
 <script lang='ts'>
@@ -246,6 +249,14 @@ export default class ChatPageHome extends AntiMixin {
         }
       }
     }
+  }
+  .no-chat{
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    font-size: 14px;
   }
 }
 </style>

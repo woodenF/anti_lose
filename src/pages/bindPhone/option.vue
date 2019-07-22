@@ -35,7 +35,6 @@ export default class BindPhoneOption extends AntiMixin {
   }
   private async checkCode(code: string) {
     const qrCodeStatus: any = await queryCode({ code });
-    // const qrCodeStatus: any = await saveCode({ code });
     this.currentUser = await getUserInfoById();
     if (qrCodeStatus.data) {
       // 该二维码已绑定用户
