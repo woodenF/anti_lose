@@ -1,8 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
-import { UserInfo } from '../interface/interface';
-import { JsonToString, wxLogin } from '../utils/util';
-import { getUserByCode, setUserInfo } from '../http/api';
+import { JsonToString } from '../utils/util';
+import { setUserInfo, bindFormId } from '../http/api';
 
 export default class AntiMixin extends Vue {
   @State('openId')
@@ -30,6 +29,7 @@ export default class AntiMixin extends Vue {
   }
 
   public async bindGetUserInfo(e: any, path: string = '') {
+    console.log(e)
     if (!this.isNavigate) {
       return
     }
@@ -43,6 +43,12 @@ export default class AntiMixin extends Vue {
         this.isNavigate = false;
       }
     }
+  }
+
+  public async formSubmit(e: any) {
+    const formId = e.target.formId;
+    await bindFormId({ formId });
+    console.log(e);
   }
 
   /**

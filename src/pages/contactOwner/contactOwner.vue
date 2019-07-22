@@ -3,7 +3,11 @@
     <div class="container">
       <div class="no-register">
         <div class="home-wrapper">
-          <img @click="navigateTo('/pages/homePage/home')" src="../../assets/image/contactOwner/home.png" alt="">
+          <form report-submit="true" @submit="formSubmit">
+            <button form-type="submit" @click="navigateTo('/pages/homePage/home')">
+              <img src="../../assets/image/contactOwner/home.png" alt="">
+            </button>
+          </form>
         </div>
         <div class="card-wrapper">
           <div class="title">我的物品遗失了<br/>谢谢你能主动联系我</div>
@@ -12,15 +16,21 @@
           </div>
         </div>
         <div class="btn-wrapper">
-          <div @click="onCall" :class="{active: isAvailable}" class="btn">
-            {{btnText}}
-          </div>
+          <form report-submit="true" @submit="formSubmit">
+            <button form-type="submit" @click="onCall" :class="{active: isAvailable}" class="btn">
+              {{btnText}}
+            </button>
+          </form>
         </div>
         <div class="remark">
           采用通话加密技术，呼叫双方不能看到对方的真实号码，不会泄漏您的隐私
         </div>
         <div class="leave-message">
-          若电话沟通有问题，请给 ta <label @click="navigateTo('/pages/chatPage/chat', { id: codeOwner.openId, nickName: codeOwner.nickName })">留言  <img src="../../assets/image/contactOwner/right.png" alt=""></label>
+          若电话沟通有问题，请给 ta
+          <label @click="navigateTo('/pages/chatPage/chat', { id: codeOwner.openId, nickName: codeOwner.nickName })">
+              留言
+            <img src="../../assets/image/contactOwner/right.png" alt="">
+          </label>
         </div>
       </div>
     </div>
@@ -59,7 +69,8 @@ export default class ContactOwner extends AntiMixin {
 
   private async getCodeOwner(code: string) {
     this.codeOwner = await queryCode({ code })
-    this.isAvailable = this.codeOwner.phoneEncryptionStatus
+    console.log(this.codeOwner)
+    this.isAvailable = this.codeOwner.data.phoneEncryptionStatus
   }
 
   private onLoad(option: any) {
@@ -76,6 +87,13 @@ export default class ContactOwner extends AntiMixin {
     .no-register{
       .home-wrapper{
         padding-top: 3.37%;
+        button{
+          width: 33.5px;
+          height: 33.5px;
+          margin: 0;
+          padding: 0;
+          background: none;
+        }
         img{
           width: 23.5px;
           height: 23.5px;

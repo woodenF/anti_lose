@@ -169,3 +169,11 @@ export function setUserInfo(params: any) {
     })
   })
 }
+
+export function bindFormId(params: any) {
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.bindFormId, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}

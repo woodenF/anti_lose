@@ -38,7 +38,9 @@
       </div>
       <div class="more-wrapper">
         <img v-if="inputMessage.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
-        <div @click="sendMessage(1)" v-else class="send">发送</div>
+        <form v-else report-submit="true" @submit="formSubmit">
+          <button form-type="submit" @click="sendMessage(1)" class="send">发送</button>
+        </form>
       </div>
     </div>
   </div>
@@ -95,8 +97,8 @@ export default class ChatPageChat extends AntiMixin {
   }
   private async getMessageInfo() {
     const messageInfo: any = await getMessageInfo({ sendOpenId: this.sendOpenId });
-    this.chatMessages = (messageInfo.data as []).reverse();
-    this.scrollTop = (messageInfo.data as []).length * 500;
+    this.chatMessages = (messageInfo.data || [] as []).reverse();
+    this.scrollTop = (messageInfo.data|| [] as []).length * 500;
   }
 }
 </script>
@@ -181,6 +183,8 @@ export default class ChatPageChat extends AntiMixin {
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 0;
+        padding: 0;
         color: #fff;
         width: 44.5px;
         height: 29px;

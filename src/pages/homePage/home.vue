@@ -14,14 +14,18 @@
       </div>
     </div>
     <div class="header">
-      <button lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
-        <img class="set" src="../../assets/image/contactOwner/set.png" alt="">
-      </button>
+      <form report-submit="true" @submit="formSubmit">
+        <button form-type="submit" lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
+          <img class="set" src="../../assets/image/contactOwner/set.png" alt="">
+        </button>
+      </form>
       <div class="space"></div>
       <div class="notice-wrapper">
-        <button lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/chatPage/home')" open-type="getUserInfo" class="set-btn">
-          <img class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
-        </button>
+        <form report-submit="true" @submit="formSubmit">
+          <button form-type="submit" lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/chatPage/home')" open-type="getUserInfo" class="set-btn">
+            <img class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
+          </button>
+        </form>
       </div>
     </div>
 		<div class="container">
@@ -37,14 +41,18 @@
           </div>
         </div>
         <div class="more-qrcode">
-          <div @click="onLinkToPath('/pages/purchase/purchaseQrcode')" class="btn">
-            购买更多防丢二维码
-          </div>
+          <form report-submit="true" @submit="formSubmit">
+            <button form-type="submit" @click="onLinkToPath('/pages/purchase/purchaseQrcode')" class="btn">
+              购买更多防丢二维码
+            </button>
+          </form>
         </div>
         <div class="more-minutes">
-          <div @click="onLinkToPath('/pages/homePage/reward')" class="btn">
-            打赏开发者
-          </div>
+          <form report-submit="true" @submit="formSubmit">
+            <button form-type="submit" @click="onLinkToPath('/pages/homePage/reward')" class="btn">
+              打赏开发者
+            </button>
+          </form>
         </div>
       </div>
 			<div v-else class="no-register">
@@ -56,8 +64,9 @@
           </swiper>
         </div>
         <div class="btn-wrapper">
-          <button lang="zh_CN" class="author" @getuserinfo="bindGetUserInfo($event, '/pages/purchase/purchaseQrcode')" open-type="getUserInfo">获取防丢二维码</button>
-          <!-- <im-button @click="onLinkToPath('/pages/purchase/purchaseQrcode')" @getuserinfo="bindGetUserInfo" open-type="getUserInfo" class="btn" :label="'获取防丢二维码'"></im-button> -->
+          <form report-submit="true" @submit="formSubmit">
+            <button form-type="submit" lang="zh_CN" class="author" @getuserinfo="bindGetUserInfo($event, '/pages/purchase/purchaseQrcode')" open-type="getUserInfo">获取防丢二维码</button>
+          </form>
         </div>
 			</div>
 		</div>
@@ -96,13 +105,12 @@ export default class Home extends AntiMixin {
   private async getUserInfo() {
     const userInfo: any = await getUserInfoById();
     this.isEncryption = userInfo.phoneEncryptionStatus;
-    this.isRegister = !!userInfo.phone;
+    this.isRegister = !userInfo.phone;
   }
 
   private onLinkToPath(path: string) {
 		this.navigateTo(path);
   }
-
 }
 </script>
 <style lang='scss'>

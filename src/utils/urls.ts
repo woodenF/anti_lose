@@ -1,5 +1,5 @@
-// const baseURL = 'http://172.17.0.85:8080/lostfound-api';
-const baseURL = 'https://sign.ei-marketing.net/lostfound-api';
+const baseURL = 'http://172.17.0.85:8080/lostfound-api';
+// const baseURL = 'https://sign.ei-marketing.net/lostfound-api';
 
 export const urls = {
   getUserByCode: `${baseURL}/login/getSession/`,
@@ -14,5 +14,6 @@ export const urls = {
   queryCode: `${baseURL}/user/anti-lost-info/getUser.do`,
   wxPayUnifiedorder: `${baseURL}/wxpay/unifiedorder.do`,
   getRechargeList: `${baseURL}/user/recharge-type/getList.do`,
-  setUserInfo: `${baseURL}/user/info/update.do`
+  setUserInfo: `${baseURL}/user/info/update.do`,
+  bindFormId: `${baseURL}/user/info/bingdingFormId.do`
 }

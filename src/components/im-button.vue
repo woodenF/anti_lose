@@ -1,18 +1,23 @@
 <template>
-  <div @click="onClickBtn"
-  :class="{active: isActive}"
-  @touchstart="isActive = true"
-  @touchend="isActive = false"
-  class="im-button">
-    {{label}}
-  </div>
+  <form report-submit="true" @submit="formSubmit">
+    <div
+    form-type="submit"
+    @click="onClickBtn"
+    :class="{active: isActive}"
+    @touchstart="isActive = true"
+    @touchend="isActive = false"
+    class="im-button">
+      {{label}}
+    </div>
+  </form>
 </template>
 <script lang='ts'>
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
+import AntiMixin from '../mixins/antiMixin';
 
 @Component
-export default class ImButton extends Vue {
+export default class ImButton extends AntiMixin {
   @Prop()
   private label!: string;
 
