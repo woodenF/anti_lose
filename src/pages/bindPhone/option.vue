@@ -55,10 +55,11 @@ export default class BindPhoneOption extends AntiMixin {
     } else {
       uni.showModal(
         {
-          title: '',
-          content: `将该二维码与用户 ${this.currentUser.phone} 绑定吗`,
+          title: '绑定防丢二维码',
+          content: '您之前已经绑定过防丢二维码，绑定新的防丢二维码不会影响之前的防丢二维码的使用',
+          // content: `将该二维码与用户 ${this.currentUser.phone} 绑定吗`,
           cancelText: '取消',
-          confirmText: '确定',
+          confirmText: '确定绑定',
           success: (res) => {
             if (res.confirm) {
               this.saveCode();
