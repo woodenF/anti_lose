@@ -14,12 +14,12 @@
       </div>
     </div>
     <div class="header">
-      <button @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
+      <button lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
         <img class="set" src="../../assets/image/contactOwner/set.png" alt="">
       </button>
       <div class="space"></div>
       <div class="notice-wrapper">
-        <button @getuserinfo="bindGetUserInfo($event, '/pages/chatPage/home')" open-type="getUserInfo" class="set-btn">
+        <button lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/chatPage/home')" open-type="getUserInfo" class="set-btn">
           <img class="notice" src="../../assets/image/contactOwner/notice.png" alt="">
         </button>
       </div>
@@ -42,8 +42,8 @@
           </div>
         </div>
         <div class="more-minutes">
-          <div @click="onLinkToPath('/pages/purchase/purchase')" class="btn">
-            购买加密通话分钟数
+          <div @click="onLinkToPath('/pages/homePage/reward')" class="btn">
+            打赏开发者
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
           </swiper>
         </div>
         <div class="btn-wrapper">
-          <button class="author" @getuserinfo="bindGetUserInfo($event, '/pages/purchase/purchaseQrcode')" open-type="getUserInfo">获取防丢二维码</button>
+          <button lang="zh_CN" class="author" @getuserinfo="bindGetUserInfo($event, '/pages/purchase/purchaseQrcode')" open-type="getUserInfo">获取防丢二维码</button>
           <!-- <im-button @click="onLinkToPath('/pages/purchase/purchaseQrcode')" @getuserinfo="bindGetUserInfo" open-type="getUserInfo" class="btn" :label="'获取防丢二维码'"></im-button> -->
         </div>
 			</div>
