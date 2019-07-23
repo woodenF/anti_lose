@@ -33,3 +33,15 @@ export function wxLogin() {
     })
   })
 }
+
+
+export function getParams(url: string, key: string) {
+  const search: any = url.split('?')[1];
+  const reg = new RegExp(`(^|&)${key}=([^&]*)(&|$)`, 'i');
+  const result = search.match(reg);
+  console.log(result)
+  if(result && result[2]) {
+    return result[2]
+  }
+  return ''
+}

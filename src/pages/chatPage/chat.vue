@@ -15,7 +15,10 @@
               <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
-              {{item.content}}
+              <div v-if="item.type === 1" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === 2" class="img">
+                <img mode="widthFix" :src="item.content" alt="">
+              </div>
             </div>
           </div>
           <div v-if="item.sendOpenId === sendOpenId" class="other-message">
@@ -23,7 +26,10 @@
               <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
-              {{item.content}}
+              <div v-if="item.type === 1" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === 2" class="img">
+                <img mode="widthFix" :src="item.content" alt="">
+              </div>
             </div>
           </div>
         </div>
@@ -37,10 +43,17 @@
         <img class="smile" src="../../assets/image/chatPage/smile.png" alt="">
       </div>
       <div class="more-wrapper">
-        <img v-if="inputMessage.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
+        <img @click="isShow = !isShow" v-if="inputMessage.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
         <form v-else report-submit="true" @submit="formSubmit">
-          <button form-type="submit" @click="sendMessage(1)" class="send">发送</button>
+          <button form-type="submit" @click="sendMessage(1, inputMessage)" class="send">发送</button>
         </form>
+      </div>
+    </div>
+    <div :animation="animationData" class="select-wrapper">
+      <div class="option">
+        <div @click="chooseImage" class="option-item">
+          相册
+        </div>
       </div>
     </div>
   </div>
@@ -59,11 +72,13 @@ import { getMessageInfo, sendMessage } from '../../http/api';
 })
 export default class ChatPageChat extends AntiMixin {
   private sendOpenId: string = '';
-
+  private isShow: boolean = false;
   private inputMessage: string = '';
   private scrollTop: number = 0;
   // type 1 文字 2 图片 3 系统消息
   private chatMessages: object[] = []
+  private animationData: any = {};
+
 
   private onLoad(option: any) {
     this.changePageTitle(option.nickName)
@@ -74,18 +89,19 @@ export default class ChatPageChat extends AntiMixin {
     this.getMessageInfo();
   }
 
-  private async sendMessage(type: number) {
+  private async sendMessage(type: number, content: string, src: string = '') {
     const params = {
-      content: this.inputMessage,
+      content,
       toOpenId: this.sendOpenId,
       type
     }
     const isSuccess: any = await sendMessage(params);
     if (isSuccess.errCode === 200) {
+      content = type === 2 ? src : content;
       this.chatMessages.push(
         {
-          type: 1,
-          content: this.inputMessage,
+          type,
+          content,
           sendAvatarUrl: this.avatarUrl,
           sendOpenId: this.openId,
           toOpenId: this.sendOpenId
@@ -100,6 +116,56 @@ export default class ChatPageChat extends AntiMixin {
     this.chatMessages = (messageInfo.data || [] as []).reverse();
     this.scrollTop = (messageInfo.data|| [] as []).length * 500;
   }
+
+  private selectShow() {
+    const animation: any = uni.createAnimation();
+    animation.height(200).step({ duration: 100, timingFunction: 'linear' });
+    this.animationData = animation.export();
+  }
+  private selectHide() {
+    const animation: any = uni.createAnimation();
+    animation.height(0).step({ duration: 100, timingFunction: 'linear' });
+    this.animationData = animation.export();
+  }
+  private chooseImage() {
+    uni.chooseImage(
+      {
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        success: (res: any) => {
+          const src = res.tempFilePaths[0];
+          this.imageToBase64(src).then((base: any) => {
+            this.sendMessage(2, base, src);
+          });
+        }
+      }
+    )
+  }
+
+  private imageToBase64(file: string) {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: file,
+        method: 'GET',
+        responseType: 'arraybuffer',
+        success: (res: any) => {
+          const base64 = uni.arrayBufferToBase64(res.data);
+          resolve(base64);
+        }
+      })
+    })
+  }
+
+  @Watch('isShow')
+  private isShowChange(isShow: boolean) {
+    console.log('==========')
+    if (isShow) {
+      this.selectShow();
+    } else {
+      this.selectHide();
+    }
+  }
 }
 </script>
 <style lang='scss'>
@@ -108,6 +174,7 @@ export default class ChatPageChat extends AntiMixin {
   background: #f8f8f8;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   .content-wrapper{
     background: #f8f8f8;
     overflow: hidden;
@@ -138,10 +205,18 @@ export default class ChatPageChat extends AntiMixin {
           .message{
             background: #fff;
             word-break: break-word;
-            max-width: 50%;
+            max-width: 60%;
             border-radius: 19px;
             padding: 11px;
             font-size: 17px;
+            .text{}
+            .img{
+              width: 100%;
+              img{
+                border-radius: 19px;
+                width: 50vw;
+              }
+            }
           }
         }
         .other-message{
@@ -192,6 +267,14 @@ export default class ChatPageChat extends AntiMixin {
         background: #ff8b23;
         border-radius: 10px;
       }
+    }
+  }
+  .select-wrapper{
+    background: #fff;
+    height: 0px;
+    .option{
+      padding: 2% 3%;
+      box-sizing: border-box;
     }
   }
 }

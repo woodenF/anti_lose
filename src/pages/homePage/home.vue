@@ -105,7 +105,7 @@ export default class Home extends AntiMixin {
   private async getUserInfo() {
     const userInfo: any = await getUserInfoById();
     this.isEncryption = userInfo.phoneEncryptionStatus;
-    this.isRegister = !userInfo.phone;
+    this.isRegister = !!userInfo.phone;
   }
 
   private onLinkToPath(path: string) {

@@ -45,7 +45,7 @@ export function sendMsnByPhone(params: any = {}) {
  */
 export function bindPhone(params: any = {}) {
   return new Promise((resolve, reject) => {
-    postCheckToken(`${urls.bindPhone}${params.code}.do`, params).then((res: any) => {
+    postCheckToken(urls.bindPhone, params).then((res: any) => {
       resolve(res.data);
     })
   })

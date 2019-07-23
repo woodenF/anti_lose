@@ -1,11 +1,11 @@
-const baseURL = 'http://172.17.0.85:8080/lostfound-api';
-// const baseURL = 'https://sign.ei-marketing.net/lostfound-api';
+// const baseURL = 'http://172.17.0.85:8080/lostfound-api';
+const baseURL = 'https://sign.ei-marketing.net/lostfound-api';
 
 export const urls = {
   getUserByCode: `${baseURL}/login/getSession/`,
   getUserInfoById: `${baseURL}/user/info/getById.do`,
   sendMsnByPhone: `${baseURL}/user/info/sendMSN.do`,
-  bindPhone: `${baseURL}/user/anti-lost-info/save/`,
+  bindPhone: `${baseURL}/user/anti-lost-info/save.do`,
   getMessageList: `${baseURL}/message/messages-info/getList.do`,
   getMessageInfo: `${baseURL}/message/messages-info/getInfo.do`,
   sendMessage: `${baseURL}/message/messages-info/save.do`,

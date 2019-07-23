@@ -27,7 +27,7 @@
         </div>
         <div class="leave-message">
           若电话沟通有问题，请给 ta
-          <label @click="navigateTo('/pages/chatPage/chat', { id: codeOwner.openId, nickName: codeOwner.nickName })">
+          <label @click="navigateTo('/pages/chatPage/chat', { id: codeOwner.data.openId, nickName: codeOwner.data.nickName })">
               留言
             <img src="../../assets/image/contactOwner/right.png" alt="">
           </label>

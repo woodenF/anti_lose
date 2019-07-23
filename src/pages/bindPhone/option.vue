@@ -20,6 +20,7 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 import ImButton from '../../components/im-button.vue';
 import AntiMixin from '../../mixins/antiMixin';
 import { saveCode, queryCode, getUserInfoById } from '../../http/api';
+import { getParams } from '../../utils/util';
 
 @Component({
   components: {
@@ -50,7 +51,8 @@ export default class BindPhoneOption extends AntiMixin {
     if (this.currentUser === {}) {
       this.currentUser = await getUserInfoById();
     }
-    if (this.currentUser.phone === '') {
+    console.log(this.currentUser)
+    if (!this.currentUser.phone) {
       this.navigateTo('/pages/bindPhone/home', { code: this.code });
     } else {
       uni.showModal(
@@ -72,6 +74,7 @@ export default class BindPhoneOption extends AntiMixin {
 
   private async saveCode() {
     const status: any = await saveCode({ code: this.code });
+    console.log(status)
     if (status.errCode === 200) {
       this.tipToast('绑定成功!')
       setTimeout(() => {
@@ -81,9 +84,13 @@ export default class BindPhoneOption extends AntiMixin {
   }
 
   private onLoad(options: any) {
-    if (options.code) {
+    const url = decodeURIComponent(options.q)
+    if (url && url !== 'undefined') {
+      this.code = getParams(url, 'code');
+      this.checkCode(this.code);
+    } else if (options.code) {
       this.code = options.code;
-      this.checkCode(options.code);
+      this.checkCode(this.code);
       return
     }
   }
