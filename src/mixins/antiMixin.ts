@@ -33,14 +33,12 @@ export default class AntiMixin extends Vue {
     if (!this.isNavigate) {
       return
     }
-    this.isNavigate = true;
     const userInfo = e.target.userInfo || false;
     if (userInfo) {
       this.setAvatarUrl(userInfo.avatarUrl);
       const isSuccess: any = await setUserInfo(userInfo);
       if(isSuccess.errCode === 200) {
         this.navigateTo(path)
-        this.isNavigate = false;
       }
     }
   }

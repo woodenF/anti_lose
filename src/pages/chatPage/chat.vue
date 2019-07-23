@@ -135,6 +135,7 @@ export default class ChatPageChat extends AntiMixin {
         sourceType: ['album', 'camera'],
         success: (res: any) => {
           const src = res.tempFilePaths[0];
+          console.log(src)
           this.imageToBase64(src).then((base: any) => {
             this.sendMessage(2, base, src);
           });
@@ -145,15 +146,17 @@ export default class ChatPageChat extends AntiMixin {
 
   private imageToBase64(file: string) {
     return new Promise((resolve, reject) => {
-      uni.request({
-        url: file,
-        method: 'GET',
-        responseType: 'arraybuffer',
-        success: (res: any) => {
-          const base64 = uni.arrayBufferToBase64(res.data);
-          resolve(base64);
-        }
-      })
+      const base = (uni as any).getFileSystemManager().readFileSync(file, 'base64');
+      resolve(base)
+      // uni.request({
+      //   url: file,
+      //   method: 'GET',
+      //   responseType: 'arraybuffer',
+      //   success: (res: any) => {
+      //     const base64 = uni.arrayBufferToBase64(res.data);
+      //     resolve(base64);
+      //   }
+      // })
     })
   }
 
