@@ -34,6 +34,10 @@ export default class Verification extends AntiMixin {
     this.$emit('success', verification)
   }
 
+  private emptyVerification() {
+    this.verification = '';
+  }
+
   @Watch('verification')
   private verificationChange(verification: string) {
     if (verification.length === 4) {

@@ -12,22 +12,25 @@
         <div class="content" @click="onLinkToChat(item)">
           <div class="head-img">
             <img :src="item.sendAvatarUrl" alt="">
+            <div v-if="item.unreadNum" class="unreadNum">
+              {{item.unreadNum}}
+            </div>
           </div>
           <div class="message-info">
             <div class="user-info">
               <div class="nick-name">{{item.sendNickName}}</div>
-              <div class="time">{{item.messagesInfos[0].inTime}}</div>
+              <div class="time">{{item.inTime}}</div>
             </div>
             <div class="last-message">
-              {{item.messagesInfos[0].content}}
+              {{item.content}}
             </div>
           </div>
         </div>
         <div class="operation">
-          <div @click.stop="pullBlack" class="pull-black">
+          <div @click.stop="pullBlack(index)" class="pull-black">
             拉黑TA
           </div>
-          <div @click.stop="deleteChat" class="delete">
+          <div @click.stop="deleteChat(index)" class="delete">
             删除对话
           </div>
         </div>
@@ -42,7 +45,7 @@
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '../../mixins/antiMixin';
-import { getMessageList } from '../../http/api';
+import { getMessageList, deleteMessage, saveBlackList } from '../../http/api';
 
 @Component
 export default class ChatPageHome extends AntiMixin {
@@ -96,11 +99,21 @@ export default class ChatPageHome extends AntiMixin {
         confirmText: '确认',
         success: (res) => {
           if (res.confirm) {
+            this.saveBlackList(index, (this.messageList[index] as any).sendOpenId);
           }
         }
       }
     )
   }
+
+  private async saveBlackList(index: number, openId: string) {
+    await saveBlackList({ toOpenId: openId })
+    this.isTouch = true;
+    this.changeOperationStatus(false);
+    this.messageList.splice(index, 1);
+    this.isTouch = false;
+  }
+
   private deleteChat(index: number) {
     uni.showModal(
       {
@@ -110,10 +123,13 @@ export default class ChatPageHome extends AntiMixin {
         confirmText: '确认',
         success: (res) => {
           if (res.confirm) {
-            this.isTouch = true;
-            this.changeOperationStatus(false);
-            this.messageList.splice(index, 1);
-            this.isTouch = false;
+            deleteMessage({ sendOpenId: (this.messageList[index] as any).sendOpenId })
+              .then((res: any) => {
+                this.isTouch = true;
+                this.changeOperationStatus(false);
+                this.messageList.splice(index, 1);
+                this.isTouch = false;
+              })
           }
         }
       }
@@ -180,11 +196,25 @@ export default class ChatPageHome extends AntiMixin {
         display: flex;
         padding: 0 28px;
         .head-img{
+          position: relative;
           padding-right: 10px;
           img{
             width: 57px;
             height: 57px;
             border-radius: 50%;
+          }
+          .unreadNum{
+            position: absolute;
+            right: 5px;
+            top: -5px;
+            height: 20px;
+            width: 20px;
+            background: #ff5000;
+            border-radius: 50%;
+            font-size: 13px;
+            text-align: center;
+            line-height: 20px;
+            color: #fff;
           }
         }
         .message-info{

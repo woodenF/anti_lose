@@ -77,6 +77,18 @@
 			"style": {
 				"navigationBarTitleText": "打赏开发者"
 			}
+		},
+		{
+			"path": "pages/setPage/problem",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/bindPhone/changePhone",
+			"style": {
+				"navigationBarTitleText": "修改手机号码"
+			}
 		}
 	],
 	"globalStyle": {

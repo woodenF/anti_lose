@@ -3,16 +3,13 @@
     <div class="black-list-wrapper">
       <div class="black-list-item" v-for="(item, index) in blackList" :key="index">
         <div class="head-img">
-          <img :src="item.head_img" alt="">
+          <img :src="item.avatarUrl" alt="">
         </div>
         <div class="nick-name">
           {{item.nickName}}
         </div>
-        <div class="remove">
+        <div  @click="deleteBlackList(item.id, index)" class="remove">
           <im-button :label="'移出黑名单'" class="btn"></im-button>
-          <!-- <div class="btn">
-            移出黑名单
-          </div> -->
         </div>
       </div>
     </div>
@@ -22,6 +19,7 @@
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import ImButton from '../../components/im-button.vue';
+import { getBlackList, deleteBlackList } from '../../http/api';
 
 @Component({
   components: {
@@ -29,28 +27,18 @@ import ImButton from '../../components/im-button.vue';
   }
 })
 export default class BlackList extends Vue {
-  private blackList: object[] = [
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀好大只呀好大只呀' },
-    { head_img: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2884107401,3797902000&fm=27&gp=0.jpg', nickName: '好大只呀' },
-  ]
+  private blackList: any = []
+
+  private async mounted() {
+    const blackList: any = await getBlackList()
+    this.blackList = blackList.data;
+  }
+
+  private async deleteBlackList(id: string, index: number) {
+    console.log('-------')
+    const isSuccess = await deleteBlackList({ id: id })
+    this.blackList.splice(index, 1);
+  }
 }
 </script>
 <style lang='scss' scoped>

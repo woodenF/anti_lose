@@ -12,13 +12,13 @@
             {{item.prize}}元
           </div>
         </div>
-        <div class="optation">
-          <div class="prize" :class="{'custom-active': isCustom}">
-            <div @click="onCustomFocus" v-if="!isCustom" class="default">
-              自定义金额
+        <div @click.stop="onCustomFocus" class="optation">
+          <div class="prize" :class="{'custom-active': isCustom, active: customPrize !== '' && !isCustom && activeOptation === -1}">
+            <div v-if="!isCustom" class="default">
+              {{customPrize === '' ? '自定义金额' : `${customPrize}元`}}
             </div>
             <div v-else class="custom">
-              <input v-model="customPrize" @blur="onBlur" class="custom-prize" :focus="isFocus" type="number">
+              <input v-model="customPrize" @blur="onBlur" class="custom-prize" :focus="isFocus" type="text">
               <div class="text">元</div>
             </div>
           </div>
@@ -35,16 +35,17 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { uniformOrder } from '../../http/api';
 import ImButton from '../../components/im-button.vue';
+import AntiMixin from '../../mixins/antiMixin';
 
 @Component({
   components: {
     ImButton
   }
 })
-export default class Reward extends Vue {
+export default class Reward extends AntiMixin {
   private isCustom: boolean = false;
-  private customPrize: number = 0;
-  private activeOptation: number = 1;
+  private customPrize: any = '';
+  private activeOptation: number = -1;
   private isFocus: boolean = false;
   private optation: any= [
     { prize: 2 },
@@ -54,7 +55,15 @@ export default class Reward extends Vue {
   ]
 
   private async rewardForWxPay() {
-    const prize = this.optation[this.activeOptation].prize;
+    let prize = 0;
+    if(this.activeOptation === -1 && this.customPrize !== '') {
+      prize = this.customPrize
+    } else if (this.activeOptation !== -1) {
+      prize = this.optation[this.activeOptation].prize;
+    } else {
+      this.errorToast('请选择金额!');
+      return
+    }
     const params = {
       type: 0,
       money: prize
@@ -65,7 +74,13 @@ export default class Reward extends Vue {
       nonceStr: wxPay.nonceStr,
       package: wxPay.package,
       signType: wxPay.signType,
-      paySign: wxPay.paySign
+      paySign: wxPay.paySign,
+      success: () => {
+        this.errorToast('“感谢您的支持，我们会再接再厉改进和优化产品。祝您生活愉快。');
+      },
+      fail: () => {
+        console.log('fail')
+      }
     })
   }
 
@@ -74,12 +89,8 @@ export default class Reward extends Vue {
   }
 
   private onBlur() {
-    this.optation.push(
-      { prize: this.customPrize }
-    )
-    this.customPrize = 0;
     this.isCustom = false;
-    this.activeOptation = this.optation.length - 1;
+    this.activeOptation = -1;
   }
 
   private onCustomFocus() {

@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="header">
-      <form report-submit="true" @submit="formSubmit">
+      <form report-submit="true" v-if="isRegister" @submit="formSubmit">
         <button form-type="submit" lang="zh_CN" @getuserinfo="bindGetUserInfo($event, '/pages/setPage/home')" open-type="getUserInfo" class="set-btn">
           <img class="set" src="../../assets/image/contactOwner/set.png" alt="">
         </button>
@@ -34,7 +34,7 @@
           <div class="title">允许被呼叫</div>
           <div class="content">关闭后，扫码将无法被呼叫</div>
           <div class="btn-wrapper">
-            <div @click="isEncryption = !isEncryption" class="btn" :class="{active: isEncryption}">
+            <div @click="onChangeEncryption" class="btn" :class="{active: isEncryption}">
               <div :class="{left: !isEncryption, right: isEncryption}" class="status">
               </div>
             </div>
@@ -42,14 +42,14 @@
         </div>
         <div class="more-qrcode">
           <form report-submit="true" @submit="formSubmit">
-            <button form-type="submit" @click="onLinkToPath('/pages/purchase/purchaseQrcode')" class="btn">
+            <button form-type="submit" @click="navigateTo('/pages/purchase/purchaseQrcode')" class="btn">
               购买更多防丢二维码
             </button>
           </form>
         </div>
         <div class="more-minutes">
           <form report-submit="true" @submit="formSubmit">
-            <button form-type="submit" @click="onLinkToPath('/pages/homePage/reward')" class="btn">
+            <button form-type="submit" @click="navigateTo('/pages/homePage/reward')" class="btn">
               打赏开发者
             </button>
           </form>
@@ -77,7 +77,7 @@ import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
 import AntiMixin from '@/mixins/antiMixin';
-import { getUserByCode, getUserInfoById } from '../../http/api';
+import { getUserByCode, getUserInfoById, changeEncryStatus } from '../../http/api';
 import ImButton from '../../components/im-button.vue';
 import { checkLoginStatus } from '../../utils/util';
 
@@ -108,9 +108,11 @@ export default class Home extends AntiMixin {
     this.isRegister = !!userInfo.phone;
   }
 
-  private onLinkToPath(path: string) {
-		this.navigateTo(path);
+  private async onChangeEncryption() {
+    this.isEncryption = !this.isEncryption;
+    await changeEncryStatus({ phoneEncryptionStatus: this.isEncryption ? 1 : 0 });
   }
+
 }
 </script>
 <style lang='scss'>

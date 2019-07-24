@@ -7,27 +7,27 @@
       id="message-wrapper"
       class="message-wrapper">
         <div class="message-item" v-for="(item, index) in chatMessages" :key="index">
-          <div v-if="item.type === 3" class="system-message">
+          <div v-if="item.type === messageType.SYSTEM" class="system-message">
             {{item.content}}
           </div>
-          <div v-if="item.sendOpenId === openId" class="own-message">
+          <div v-if="item.sendType === sendType.SEND" class="own-message">
             <div class="head-img">
               <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
-              <div v-if="item.type === 1" class="text">{{item.content}}</div>
-              <div v-else-if="item.type === 2" class="img">
+              <div v-if="item.type === messageType.TEXT" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === messageType.IMG" class="img">
                 <img mode="widthFix" :src="item.content" alt="">
               </div>
             </div>
           </div>
-          <div v-if="item.sendOpenId === sendOpenId" class="other-message">
+          <div v-if="item.sendType === sendType.RECEIVE" class="other-message">
             <div class="head-img">
               <img :src="item.sendAvatarUrl" alt="">
             </div>
             <div class="message">
-              <div v-if="item.type === 1" class="text">{{item.content}}</div>
-              <div v-else-if="item.type === 2" class="img">
+              <div v-if="item.type === messageType.TEXT" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === messageType.IMG" class="img">
                 <img mode="widthFix" :src="item.content" alt="">
               </div>
             </div>
@@ -52,7 +52,8 @@
     <div :animation="animationData" class="select-wrapper">
       <div class="option">
         <div @click="chooseImage" class="option-item">
-          相册
+          <img src="../../assets/image/chatPage/photo.png" alt="">
+          <div class="text">相册</div>
         </div>
       </div>
     </div>
@@ -79,14 +80,22 @@ export default class ChatPageChat extends AntiMixin {
   private chatMessages: object[] = []
   private animationData: any = {};
 
+  private timer: any = null;
 
   private onLoad(option: any) {
     this.changePageTitle(option.nickName)
     this.sendOpenId = option.id;
   }
 
+  private beforeDestroy() {
+    clearInterval(this.timer);
+  }
+
   private mounted() {
     this.getMessageInfo();
+    this.timer = setInterval(() => {
+      this.getMessageInfo();
+    }, 5000)
   }
 
   private async sendMessage(type: number, content: string, src: string = '') {
@@ -104,7 +113,8 @@ export default class ChatPageChat extends AntiMixin {
           content,
           sendAvatarUrl: this.avatarUrl,
           sendOpenId: this.openId,
-          toOpenId: this.sendOpenId
+          toOpenId: this.sendOpenId,
+          sendType: this.sendType.SEND
         }
       )
       this.inputMessage = '';
@@ -148,15 +158,6 @@ export default class ChatPageChat extends AntiMixin {
     return new Promise((resolve, reject) => {
       const base = (uni as any).getFileSystemManager().readFileSync(file, 'base64');
       resolve(base)
-      // uni.request({
-      //   url: file,
-      //   method: 'GET',
-      //   responseType: 'arraybuffer',
-      //   success: (res: any) => {
-      //     const base64 = uni.arrayBufferToBase64(res.data);
-      //     resolve(base64);
-      //   }
-      // })
     })
   }
 
@@ -212,7 +213,6 @@ export default class ChatPageChat extends AntiMixin {
             border-radius: 19px;
             padding: 11px;
             font-size: 17px;
-            .text{}
             .img{
               width: 100%;
               img{
@@ -278,6 +278,17 @@ export default class ChatPageChat extends AntiMixin {
     .option{
       padding: 2% 3%;
       box-sizing: border-box;
+      .option-item{
+        text-align: center;
+        width: 40px;
+        img{
+          width: 30px;
+          height: 25.5px;
+        }
+        .text{
+          font-size: 14px;
+        }
+      }
     }
   }
 }

@@ -27,6 +27,12 @@
           <img src="../../assets/image/setPage/right.png" alt="">
         </div>
       </div>
+      <button class="set-btn" open-type="contact">
+        <div class="label">意见反馈</div>
+        <div class="icon-wrapper">
+          <img src="../../assets/image/setPage/right.png" alt="">
+        </div>
+      </button>
     </div>
   </div>
 </template>
@@ -47,10 +53,9 @@ export default class SetPageHome extends AntiMixin {
 
   private setOpations: object[] = [
     { label: '黑名单', path: '/pages/setPage/blackList' },
-    { label: '更改手机号', path: '' },
+    { label: '更改手机号', path: '/pages/bindPhone/changePhone' },
     { label: '关于防丢二维码', path: '/pages/setPage/about' },
-    { label: '常见问题', path: '' },
-    { label: '意见反馈', path: '' },
+    { label: '常见问题', path: '/pages/setPage/problem' },
   ]
 
   private mounted() {
@@ -124,9 +129,28 @@ export default class SetPageHome extends AntiMixin {
     .set{
       display: flex;
       padding-bottom: 38px;
+      align-items: flex-start;
       .label{
         flex: 1;
         font-size: 17px;
+        font-weight: 500;
+      }
+      .icon-wrapper{
+        img{
+          width: 8px;
+          height: 15.5px;
+        }
+      }
+    }
+    .set-btn{
+      display: flex;
+      margin: 0;
+      padding: 0;
+      background: none;
+      .label{
+        flex: 1;
+        font-size: 17px;
+        text-align: left;
         font-weight: 500;
       }
       .icon-wrapper{

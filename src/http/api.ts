@@ -170,9 +170,66 @@ export function setUserInfo(params: any) {
   })
 }
 
+/**
+ * 获取FormId上传
+ * @export
+ * @param {*} params
+ * @returns
+ */
 export function bindFormId(params: any) {
   return new Promise((resolve, reject) => {
     postCheckToken(urls.bindFormId, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+
+/**
+ * 修改隐私号码可拨打状态
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function changeEncryStatus(params: any) {
+  return new Promise((resolve, reject) => {
+    putCheckToken(urls.changeEncryStatus, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+/**
+ * 将用户拉入黑名单
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function saveBlackList(params: any) {
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.saveBlackList, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+
+export function getBlackList() {
+  return new Promise((resolve, reject) => {
+    fetchCheckToken(urls.getBlackList).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+
+export function deleteBlackList(params: any) {
+  return new Promise((resolve, reject) => {
+    postCheckToken(urls.deleteBlackList, params).then((res: any) => {
+      resolve(res);
+    })
+  })
+}
+
+export function changePhone(params: any) {
+  return new Promise((resolve, reject) => {
+    putCheckToken(urls.changePhone, params).then((res: any) => {
       resolve(res);
     })
   })

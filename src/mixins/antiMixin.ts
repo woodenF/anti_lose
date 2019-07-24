@@ -2,6 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
 import { JsonToString } from '../utils/util';
 import { setUserInfo, bindFormId } from '../http/api';
+import { sendType, messageType } from '../enum/enum';
 
 export default class AntiMixin extends Vue {
   @State('openId')
@@ -18,6 +19,9 @@ export default class AntiMixin extends Vue {
   public avatarUrl!: string;
   @Mutation('setAvatarUrl')
   public setAvatarUrl!: any;
+  // 枚举对象
+  public sendType = sendType;
+  public messageType = messageType;
 
   // 是否可跳转状态
   public isNavigate: boolean = true;

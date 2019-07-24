@@ -1,6 +1,6 @@
 <template>
   <div class="bind-phone-check">
-    <verification :phone="phone" @success="success"></verification>
+    <verification ref="verification" :phone="phone" @success="success"></verification>
     <div class="resend">
       <div @click="resend" class="btn" :class="{active: verificationStatus}">
         重新发送{{timeDown}}
@@ -80,6 +80,7 @@ export default class BindPhoneCheck extends AntiMixin {
 
   private resend() {
     if (!this.verificationStatus) return;
+    (this.$refs.verification as any).emptyVerification();
     sendMsnByPhone({ phone: this.phone });
     this.countDown()
   }
