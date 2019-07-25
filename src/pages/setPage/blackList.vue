@@ -13,6 +13,9 @@
         </div>
       </div>
     </div>
+    <div v-if="!blackList.length" class="no">
+      暂无黑名单数据!
+    </div>
   </div>
 </template>
 <script lang='ts'>
@@ -79,6 +82,11 @@ export default class BlackList extends Vue {
         font-size: 15px;
       }
     }
+  }
+  .no{
+    font-size: 14px;
+    text-align: center;
+    color: #888;
   }
 }
 </style>

@@ -74,6 +74,7 @@ export default class ChangePhone extends AntiMixin {
   background: #e5e5e5;
   height: 100%;
   padding: 15px 0;
+  box-sizing: border-box;
   .phone{
     display: flex;
     background: #fff;

@@ -63,8 +63,8 @@
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import AntiMixin from '../../mixins/antiMixin';
-import ImTextarea from '../../components/im-textarea.vue';
 import { getMessageInfo, sendMessage } from '../../http/api';
+import ImTextarea from '../../components/im-textarea.vue';
 
 @Component({
   components:{
@@ -175,7 +175,7 @@ export default class ChatPageChat extends AntiMixin {
 <style lang='scss'>
 .chat-page-chat{
   height: 100%;
-  background: #f8f8f8;
+  background: #F8F8F8;
   display: flex;
   flex-direction: column;
   overflow: hidden;

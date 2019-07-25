@@ -89,6 +89,10 @@ export default class Reward extends AntiMixin {
   }
 
   private onBlur() {
+    if ( parseFloat(this.customPrize) < 0.01) {
+      this.errorToast('输入金额不能小于0.01元');
+      this.customPrize = '0.01';
+    }
     this.isCustom = false;
     this.activeOptation = -1;
   }

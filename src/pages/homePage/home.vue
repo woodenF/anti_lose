@@ -99,6 +99,7 @@ export default class Home extends AntiMixin {
 	private isEncryption: boolean = false;
 
   private async mounted() {
+    this.navigateTo('/pages/chatPage/chatTest')
     await this.getUserInfo();
   }
 

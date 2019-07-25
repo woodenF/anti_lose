@@ -89,6 +89,12 @@
 			"style": {
 				"navigationBarTitleText": "修改手机号码"
 			}
+		},
+		{
+			"path": "pages/chatPage/chatTest",
+			"style": {
+				"navigationBarTitleText": "滑动测试"
+			}
 		}
 	],
 	"globalStyle": {

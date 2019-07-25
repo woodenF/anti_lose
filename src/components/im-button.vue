@@ -1,15 +1,13 @@
 <template>
-  <form report-submit="true" @submit="formSubmit">
-    <div
-    form-type="submit"
-    @click="onClickBtn"
-    :class="{active: isActive}"
-    @touchstart="isActive = true"
-    @touchend="isActive = false"
-    class="im-button">
-      {{label}}
-    </div>
-  </form>
+  <div
+  form-type="submit"
+  @click="onClickBtn"
+  :class="{active: isActive}"
+  @touchstart="isActive = true"
+  @touchend="isActive = false"
+  class="im-button">
+    {{label}}
+  </div>
 </template>
 <script lang='ts'>
 import Vue from 'vue';
