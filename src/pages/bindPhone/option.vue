@@ -30,6 +30,7 @@ import { getParams } from '../../utils/util';
 export default class BindPhoneOption extends AntiMixin {
   private currentUser: any = {};
   private code: string = '';
+  private isSuccess: boolean = false;
 
   private onLinkToPath(path: string) {
     this.navigateTo(path);
@@ -45,9 +46,11 @@ export default class BindPhoneOption extends AntiMixin {
         this.navigateTo('/pages/contactOwner/contactOwner', { code });
       }
     }
+    this.isSuccess = true;
   }
 
   private async bindQrcode() {
+    if(!this.isSuccess) return;
     if (this.currentUser === {}) {
       this.currentUser = await getUserInfoById();
     }

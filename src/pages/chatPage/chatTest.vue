@@ -1,109 +1,101 @@
 <template>
-  <!-- <mescroll-uni @down="downCallback" @up="upCallback">
-    <div class="item" v-for="(item, index) in testData" :key="index">{{item}}</div>
-  </mescroll-uni>-->
-  <div class="chat-message">
-    <div class="scroll-wrapper">
-      <mescroll-uni
-        ref="mescroll"
-        class="scroll"
-        :down="{use: false}"
-        :up="upOption"
-        :top="20"
-        :bottom="scrollFixBottom"
-        @up="upCallback"
-      >
-        <div class="chat" v-for="(item, index) in chatDatas" :key="index">
-          <div v-if="item.type === messageType.SYSTEM" class="system">
+  <div class="chat-page-chat">
+    <div class="content-wrapper">
+      <scroll-view
+      scroll-y="true"
+      :scroll-top="scrollTop"
+      id="message-wrapper"
+      class="message-wrapper">
+        <div class="message-item" v-for="(item, index) in chatMessages" :key="index">
+          <div v-if="item.type === messageType.SYSTEM" class="system-message">
             {{item.content}}
           </div>
-          <div class="user-message" v-else>
-            <div class="avatarUrl">
-              <img :src="item.sendAvatarUrl" alt />
+          <div v-if="item.sendType === sendType.SEND" class="own-message">
+            <div class="head-img">
+              <img :src="item.sendAvatarUrl" alt="">
             </div>
-            <div class="container">
-              <div class="header">
-                <div class="nickname">{{item.sendNickName}}</div>
-                <div class="empty"></div>
-                <div class="time">{{item.inTime}}</div>
+            <div class="message">
+              <div v-if="item.type === messageType.TEXT" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === messageType.IMG" class="img">
+                <img mode="widthFix" :src="item.content" alt="">
               </div>
-              <div class="content">{{item.content}}</div>
+            </div>
+          </div>
+          <div v-if="item.sendType === sendType.RECEIVE" class="other-message">
+            <div class="head-img">
+              <img :src="item.sendAvatarUrl" alt="">
+            </div>
+            <div class="message">
+              <div v-if="item.type === messageType.TEXT" class="text">{{item.content}}</div>
+              <div v-else-if="item.type === messageType.IMG" class="img">
+                <img mode="widthFix" :src="item.content" alt="">
+              </div>
             </div>
           </div>
         </div>
-      </mescroll-uni>
+      </scroll-view>
     </div>
-    <div class="operate-wrapper">
+    <div class="operation-wrapper">
       <div class="input-wrapper">
-        <im-textarea v-model="inputChat" :inputMessage="inputChat" class="input">
-        </im-textarea>
+        <im-textarea v-model="inputMessage" :inputMessage="inputMessage" class="input"></im-textarea>
       </div>
       <div class="smile-wrapper">
         <img class="smile" src="../../assets/image/chatPage/smile.png" alt="">
       </div>
       <div class="more-wrapper">
-        <img @click="isShow = !isShow" v-if="inputChat.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
+        <img @click="isShow = !isShow" v-if="inputMessage.length === 0" class="more" src="../../assets/image/chatPage/more.png" alt="">
         <form v-else report-submit="true" @submit="formSubmit">
-          <button form-type="submit" @click="sendMessage(1, inputChat)" class="send">发送</button>
+          <button form-type="submit" @click="sendMessage(1, inputMessage)" class="send">发送</button>
         </form>
+      </div>
+    </div>
+    <div :animation="animationData" class="select-wrapper">
+      <div class="option">
+        <div @click="chooseImage" class="option-item">
+          <img src="../../assets/image/chatPage/photo.png" alt="">
+          <div class="text">相册</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script lang='ts'>
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import MescrollUni from "@/components/mescroll-uni/mescroll-uni.vue";
-import { getMessageInfo, sendMessage } from "../../http/api";
-import AntiMixin from "../../mixins/antiMixin";
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import AntiMixin from '../../mixins/antiMixin';
+import { getMessageInfo, sendMessage } from '../../http/api';
 import ImTextarea from '../../components/im-textarea.vue';
 
 @Component({
-  components: {
-    MescrollUni,
+  components:{
     ImTextarea
   }
 })
-export default class ChatTest extends AntiMixin {
-  private upOption: any = {
-    use: true,
-    textNoMore: '加载完成!',
-    toTop: false,
-    offset: 0
-  }
-
-  // 内容区域距离底部的距离
-  private scrollFixBottom: number = 100;
-  private chatDatas: object[] = [];
+export default class ChatPageChat extends AntiMixin {
   private sendOpenId: string = '';
-  private inputChat: string = '';
-  private isShow: boolean = true;
-  private mescroll: any = null;
+  private isShow: boolean = false;
+  private inputMessage: string = '';
+  private scrollTop: number = 0;
+  // type 1 文字 2 图片 3 系统消息
+  private chatMessages: object[] = []
+  private animationData: any = {};
+
+  private timer: any = null;
 
   private onLoad(option: any) {
-    this.sendOpenId = "o3od65e9YGUfQlsKsIa1bVzCxAW0";
+    this.changePageTitle(option.nickName)
+    this.sendOpenId = option.id;
+  }
+
+  private beforeDestroy() {
+    clearInterval(this.timer);
   }
 
   private mounted() {
-    //   this.getChatData(this.sendOpenId);
-    // this.$nextTick(() => {
-    //   this.mescroll =  (this.$refs.mescroll as any).mescroll;
-    //   this.mescroll.scrollTo(10, 0)
-    // })
-  }
-
-  private async getChatData(openId: string) {
-    const chatDatas: any = await getMessageInfo({
-      sendOpenId: openId
-    });
-    this.chatDatas = (chatDatas.data || ([] as [])).reverse();
-    setTimeout(() => {
-      console.log(this.mescroll.viewId)
-      this.mescroll.endSuccess();
-      this.mescroll.hideUpScroll();
-      const y = this.mescroll.getScrollHeight() === 0 ? 1000000 : this.mescroll.getScrollHeight() - this.mescroll.getClientHeight() + 70;
-      this.mescroll.scrollTo(y, 50);
-    }, 200);
+    this.getMessageInfo();
+    this.timer = setInterval(() => {
+      this.getMessageInfo();
+    }, 5000)
   }
 
   private async sendMessage(type: number, content: string, src: string = '') {
@@ -113,75 +105,132 @@ export default class ChatTest extends AntiMixin {
       type
     }
     const isSuccess: any = await sendMessage(params);
-    this.getChatData(this.sendOpenId);
-    this.inputChat = '';
+    if (isSuccess.errCode === 200) {
+      content = type === 2 ? src : content;
+      this.chatMessages.push(
+        {
+          type,
+          content,
+          sendAvatarUrl: this.avatarUrl,
+          sendOpenId: this.openId,
+          toOpenId: this.sendOpenId,
+          sendType: this.sendType.SEND
+        }
+      )
+      this.inputMessage = '';
+      this.scrollTop += 1000;
+    }
+  }
+  private async getMessageInfo() {
+    const messageInfo: any = await getMessageInfo({ sendOpenId: this.sendOpenId });
+    this.chatMessages = (messageInfo.data || [] as []).reverse();
+    this.scrollTop = (messageInfo.data|| [] as []).length * 500;
   }
 
-  private async upCallback(mescroll: any) {
-    this.mescroll = mescroll;
-    mescroll.hideTopBtn();
-    mescroll.showUpScroll();
-    await this.getChatData(this.sendOpenId);
+  private selectShow() {
+    console.log('==========')
+    const animation: any = uni.createAnimation();
+    animation.height(200).step({ duration: 100, timingFunction: 'linear' });
+    this.animationData = animation.export();
+  }
+  private selectHide() {
+    console.log('---------')
+    const animation: any = uni.createAnimation();
+    animation.height(0).step({ duration: 100, timingFunction: 'linear' });
+    this.animationData = animation.export();
+  }
+  private chooseImage() {
+    uni.chooseImage(
+      {
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        success: (res: any) => {
+          const src = res.tempFilePaths[0];
+          console.log(src)
+          this.imageToBase64(src).then((base: any) => {
+            this.sendMessage(2, base, src);
+          });
+        }
+      }
+    )
+  }
+
+  private imageToBase64(file: string) {
+    return new Promise((resolve, reject) => {
+      const base = (uni as any).getFileSystemManager().readFileSync(file, 'base64');
+      resolve(base)
+    })
+  }
+
+  @Watch('isShow')
+  private isShowChange(isShow: boolean) {
+    if (isShow) {
+      this.selectShow();
+    } else {
+      this.selectHide();
+    }
   }
 }
 </script>
 <style lang='scss'>
-.chat-message {
-  display: flex;
+.chat-page-chat{
   height: 100%;
+  background: #F8F8F8;
+  display: flex;
   flex-direction: column;
-  background: #f8f8f8;
-  .scroll-wrapper {
+  overflow: hidden;
+  .content-wrapper{
+    background: #f8f8f8;
+    overflow: hidden;
     flex: 1;
-    .scroll {
-      .chat {
-        width: 100%;
-        .user-message {
+    .message-wrapper{
+      height: 100%;
+      .message-item{
+        .system-message{
+          text-align: center;
+          font-size: 14px;
+          color: #bbb;
+          padding: 21px;
+        }
+        .own-message, .other-message{
+          padding: 20px;
           display: flex;
-          width: 100%;
-          .avatarUrl {
-            margin-left: 7%;
-            img {
-              width: 40px;
-              height: 40px;
+          flex-direction: row-reverse;
+          justify-content: flex-start;
+          .head-img{
+            width: 55px;
+            text-align: center;
+            img{
+              width: 45px;
+              height: 45px;
               border-radius: 50%;
             }
           }
-          .container {
-            flex: 1;
-            .header {
-              display: flex;
-              align-items: center;
+          .message{
+            background: #fff;
+            word-break: break-word;
+            max-width: 60%;
+            border-radius: 19px;
+            padding: 11px;
+            font-size: 17px;
+            .img{
               width: 100%;
-              height: 40px;
-              padding: 0 28px 0 10px;
-              box-sizing: border-box;
-              .nickname {
-                font-size: 13px;
-                color: #888;
+              img{
+                border-radius: 19px;
+                width: 50vw;
               }
-              .empty {
-                flex: 1;
-              }
-              .time {
-                font-size: 13px;
-                color: #888;
-              }
-            }
-            .content {
-              width: 100%;
-              padding: 0 28px 23px 10px;
-              word-break: break-word;
-              box-sizing: border-box;
-              font-size: 14px;
-              border-bottom: 1px solid #ececec;
             }
           }
+        }
+        .other-message{
+          display: flex;
+          flex-direction: row;
         }
       }
     }
   }
-  .operate-wrapper {
+  .operation-wrapper{
     display: flex;
     align-items: flex-end;
     padding: 0 18px 18px 18px;
@@ -221,6 +270,25 @@ export default class ChatTest extends AntiMixin {
         font-size: 16px;
         background: #ff8b23;
         border-radius: 10px;
+      }
+    }
+  }
+  .select-wrapper{
+    background: #fff;
+    height: 0px;
+    .option{
+      padding: 2% 3%;
+      box-sizing: border-box;
+      .option-item{
+        text-align: center;
+        width: 40px;
+        img{
+          width: 30px;
+          height: 25.5px;
+        }
+        .text{
+          font-size: 14px;
+        }
       }
     }
   }
