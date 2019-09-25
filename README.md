@@ -1,29 +1,5 @@
 # anti-lose
 
-## Project setup
-```
-npm install
-```
+uniapp开发，主要运行在微信小程序端
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+集成了微信支付、腾讯IM即时通讯、客服功能、微信小店
